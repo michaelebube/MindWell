@@ -1,4 +1,3 @@
-// plugins/firebase.client.ts
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -15,16 +14,16 @@ export default defineNuxtPlugin((nuxtApp) => {
     appId: config.public.firebaseAppId as string,
   };
 
-  // 1. Initialize Firebase
+
   const app = initializeApp(firebaseConfig);
 
-  // 2. Initialize Auth and Firestore
+ 
   const auth = getAuth(app);
   const firestore = getFirestore(app);
 
 
    console.log('Firebase initialized');
-  // 3. Provide them to the Nuxt App
+
   return {
     provide: {
       auth,
