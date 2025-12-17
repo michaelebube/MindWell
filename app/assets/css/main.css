@@ -1,2 +1,7 @@
 @import "tailwindcss";
 
+@theme {
+  --breakpoint-xs: 380px;
+}
+
+@custom-media --xs-screen (max-width: 380px) and (max-height: 740px);

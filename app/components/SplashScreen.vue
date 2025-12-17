@@ -1,5 +1,5 @@
 <template>
-    <div class="relative" :class="bg">
+    <div class="relative h-screen w-screen overflow-hidden" >
 
         <div class="absolute -top-1 -right-1 object-cover">
             <img :src="topSVG" alt="">
@@ -9,11 +9,9 @@
         
         <div class="absolute inset-0 flex flex-col justify-center items-center z-10">
             <img  :src="logo" alt="MindWell Logo">
-
-        
         </div>
 
-        <div class="absolute -bottom-1 object-cover w-full">
+        <div class="absolute -bottom-1 object-cover w-[105%]">
             <img :src="footerSVG" alt="">
         </div>
     </div>
@@ -21,10 +19,9 @@
 
 <script setup>
 import bgImg from '../assets/images/bgImage.png'
-import logo from '../assets/logo.svg'
-import footerSVG from '../assets/Blue-blob.svg'
-import topSVG from '../assets/green-blob.svg'
+import logo from '../assets/svg/logo.svg'
+import footerSVG from '../assets/svg/Blue-blob.svg'
+import topSVG from '../assets/svg/green-blob.svg'
 
-    const bg = `min-h-screen`
+
 </script>
-
