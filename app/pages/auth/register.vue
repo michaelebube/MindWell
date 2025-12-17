@@ -18,8 +18,8 @@
                 <div class="flex flex-col gap-1.5">
                      <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs " for="name">Anonymous Name</label>
                 <input 
-                    type="text" 
-                    id="name"
+                    id="name" 
+                    type="text"
                     autocomplete="off"
                     class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-xs  text-[#80BA41] focus:outline-none bg-gray-100 focus:ring-2 focus:ring-[#80BA41] "
                 >
@@ -28,18 +28,18 @@
                 <div class="flex flex-col gap-1.5">
                     <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs " for="email">Email</label>
                 <input 
-                    type="email" 
-                    id="email"
+                    id="email" 
+                    type="email"
                     autocomplete="off"
                     class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-[#80BA41] text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
                 >
                 </div>
                 
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs "for="password">Password</label>
+                    <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs" for="password">Password</label>
                 <input 
-                    type="password" 
-                    id="password"
+                    id="password" 
+                    type="password"
                     autocomplete="new-password"
                     class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
                 >
