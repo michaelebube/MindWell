@@ -1,7 +1,13 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @theme {
   --breakpoint-xs: 380px;
+  --font-family-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
 }
 
 @custom-media --xs-screen (max-width: 380px) and (max-height: 740px);
+
+body {
+  font-family: var(--font-family-sans);
+}
