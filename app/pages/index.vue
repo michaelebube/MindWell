@@ -36,13 +36,13 @@
                         <span class="text-[16px] xs:text-[14px]"><img :src="huggingIcon" alt="Hugging Icon"></span>
                     </h1>
                     
-                    <NuxtLink to="/auth/register" class="bg-white text-[#80BA41] xs:px-6 px-5 xs:py-2 py-1.5 rounded-xl xs:text-sm text-xs font-semibold hover:bg-gray-50 transition-colors mb-2 shadow-lg">
+                    <NuxtLink to="/register" class="bg-white text-[#80BA41] xs:px-6 px-5 xs:py-2 py-1.5 rounded-xl xs:text-sm text-xs font-semibold hover:bg-gray-50 transition-colors mb-2 shadow-lg">
                         Let's get started
                     </NuxtLink>
                     
                     <p class="text-white xs:text-sm text-xs">
                         Have an account?
-                        <NuxtLink to="/auth/login" class="text-[#80BA41] font-semibold ml-1">
+                        <NuxtLink to="/login" class="text-[#80BA41] font-semibold ml-1">
                             Sign-in
                         </NuxtLink>
                     </p>

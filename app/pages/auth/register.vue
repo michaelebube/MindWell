@@ -2,7 +2,7 @@
     <div class="flex flex-col h-full">
         <div class="flex-1 flex flex-col items-center justify-center  px-6">
             <!-- Green message card -->
-            <div class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-6 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2">
+            <div class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-12 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2">
                 <p class="xs:text-[16px] text-sm xs:leading-5 leading-5  mb-4">
                     What would you like me to call you, friend ? 
                 </p>
@@ -58,6 +58,7 @@
     import DownArrowIcon from '../../assets/svg/down-arrow.svg'
 
 definePageMeta({
-    layout: 'auth'
+    layout: 'auth',
+    path: '/register'
 })
 </script>
