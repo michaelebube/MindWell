@@ -1,64 +1,195 @@
 <template>
-    <div class="flex flex-col h-full">
-        <div class="flex-1 flex flex-col items-center justify-center  px-6">
-            <!-- Green message card -->
-            <div class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-12 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2">
-                <p class="xs:text-[16px] text-sm xs:leading-5 leading-5  mb-4">
-                    What would you like me to call you, friend ? 
-                </p>
-                <img :src="DownArrowIcon" alt="Down Arrow" width="16" height="16" class="mx-auto mb-4"/>
+  <div class="flex flex-col h-full">
+    <div class="flex-1 flex flex-col items-center justify-center px-6">
+      <!-- Green message card -->
+      <div
+        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-12 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2"
+      >
+        <!-- Default State -->
+        <template v-if="registrationState === 'idle'">
+          <p class="xs:text-[16px] text-sm xs:leading-5 leading-5 mb-4">
+            What would you like me to call you, friend ?
+          </p>
+          <img :src="DownArrowIcon" alt="Down Arrow" width="16" height="16" class="mx-auto mb-4" />
+          <p class="xs:text-[16px] text-sm xs:leading-5 leading-4">
+            You don't have to use your real name if you're not comfortable. This is a safe,
+            judgment‑free space.
+          </p>
+        </template>
 
-                <p class="xs:text-[16px] text-sm xs:leading-5 leading-4">
-                    You don’t have to use your real name if you’re not comfortable. This is a safe, judgment‑free space.
-                </p>
-            </div>
+        <!-- Success State -->
+        <template v-else-if="registrationState === 'success'">
+          <p class="xs:text-[16px] text-sm xs:leading-5 leading-5">
+            Yayy!!! Welcome to MindWell, {{ formData.name }}. You're going to love it here.
+          </p>
+        </template>
 
-            <!-- Form container -->
-            <div class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 space-y-3 rounded-xl px-6 py-8 mb-10 xs:mb-0">
-                <div class="flex flex-col gap-1.5">
-                     <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs " for="name">Anonymous Name</label>
-                <input 
-                    id="name" 
-                    type="text"
-                    autocomplete="off"
-                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-xs  text-[#80BA41] focus:outline-none bg-gray-100 focus:ring-2 focus:ring-[#80BA41] "
-                >
-                </div>
-               
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs " for="email">Email</label>
-                <input 
-                    id="email" 
-                    type="email"
-                    autocomplete="off"
-                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-[#80BA41] text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
-                >
-                </div>
-                
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs" for="password">Password</label>
-                <input 
-                    id="password" 
-                    type="password"
-                    autocomplete="new-password"
-                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
-                >
-                </div>
-                
-                
-                <button class="w-full bg-[#80BA41] text-white xs:py-3 py-2.5 rounded-lg xs:text-sm text-xs font-semibold hover:bg-[#6fa535] transition-colors mt-2 ">
-                    Create Account
-                </button>
-            </div>
+        <!-- Error State -->
+        <template v-else-if="registrationState === 'error'">
+          <p class="xs:text-[16px] text-sm xs:leading-5 leading-5">
+            It's okay — don't feel bad. Let's try again together.
+          </p>
+        </template>
+      </div>
+
+      <!-- Form container -->
+      <div
+        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 space-y-3 rounded-xl px-6 py-8 mb-10 xs:mb-0"
+      >
+        <!-- Success Message -->
+        <div v-if="registrationState === 'success'" class="text-center text-white py-4">
+          <p class="xs:text-xl text-lg font-semibold">Account Created</p>
         </div>
+
+        <!-- Error Message -->
+        <div v-else-if="registrationState === 'error'" class="text-center text-white py-4">
+          <p class="xs:text-xl text-lg font-semibold">Error</p>
+          <p class="xs:text-sm text-xs mt-2">Please try again</p>
+        </div>
+
+        <!-- Form -->
+        <form v-else @submit.prevent="handleRegister" class="flex flex-col gap-3 space-y-3">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs" for="name"
+              >Anonymous Name</label
+            >
+            <input
+              id="name"
+              v-model="formData.name"
+              type="text"
+              autocomplete="off"
+              required
+              class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-xs text-[#80BA41] focus:outline-none bg-gray-100 focus:ring-2 focus:ring-[#80BA41]"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs" for="email"
+              >Email</label
+            >
+            <input
+              id="email"
+              v-model="formData.email"
+              type="email"
+              autocomplete="off"
+              required
+              class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-[#80BA41] text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label
+              class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs"
+              for="password"
+              >Password</label
+            >
+            <input
+              id="password"
+              v-model="formData.password"
+              type="password"
+              autocomplete="new-password"
+              required
+              minlength="6"
+              class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
+            />
+          </div>
+
+          <button
+            type="submit"
+            :disabled="loading"
+            class="w-full bg-[#80BA41] text-white xs:py-3 py-2.5 rounded-lg xs:text-sm text-xs font-semibold hover:bg-[#6fa535] transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {{ loading ? 'Creating Account...' : 'Create Account' }}
+          </button>
+        </form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-    import DownArrowIcon from '../../assets/svg/down-arrow.svg'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { doc, setDoc } from 'firebase/firestore'
+import DownArrowIcon from '../../assets/svg/down-arrow.svg'
 
 definePageMeta({
-    layout: 'auth',
-    path: '/register'
+  layout: 'auth',
+  path: '/register',
 })
+
+const { $auth, $firestore } = useNuxtApp()
+const router = useRouter()
+
+const formData = ref({
+  name: '',
+  email: '',
+  password: '',
+})
+
+const loading = ref(false)
+const registrationState = ref<'idle' | 'success' | 'error'>('idle')
+
+// Store user credentials in state
+const userCredentials = useState('userCredentials', () => ({
+  name: '',
+  email: '',
+  password: '',
+}))
+
+const handleRegister = async () => {
+  try {
+    loading.value = true
+    registrationState.value = 'idle'
+
+    // Create user with email and password
+    const userCredential = await createUserWithEmailAndPassword(
+      $auth,
+      formData.value.email,
+      formData.value.password
+    )
+
+    // Update user profile with display name
+    await updateProfile(userCredential.user, {
+      displayName: formData.value.name,
+    })
+
+    // Try to save user data to Firestore (optional - won't fail registration if it errors)
+    try {
+      await setDoc(doc($firestore, 'users', userCredential.user.uid), {
+        name: formData.value.name,
+        email: formData.value.email,
+        createdAt: new Date().toISOString(),
+      })
+      console.log('User data saved to Firestore successfully')
+    } catch (firestoreErr) {
+      console.warn('Firestore save failed (non-critical):', firestoreErr)
+    }
+
+    // Store credentials in state
+    userCredentials.value = {
+      name: formData.value.name,
+      email: formData.value.email,
+      password: formData.value.password,
+    }
+
+    // Show success state
+    registrationState.value = 'success'
+
+    // Wait 3 seconds then redirect (user is already authenticated)
+    setTimeout(() => {
+      router.push('/onboarding/mood-log')
+    }, 3000)
+  } catch (err) {
+    console.error('Registration error:', err)
+
+    // Show error state
+    registrationState.value = 'error'
+
+    // Wait 3 seconds, then reset to form
+    setTimeout(() => {
+      registrationState.value = 'idle'
+      loading.value = false
+    }, 3000)
+  }
+}
 </script>

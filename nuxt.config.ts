@@ -12,6 +12,7 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
+
   runtimeConfig: {
     public: {
       firebaseApiKey: process.env.NUXT_PUBLIC_FIREBASE_API_KEY,
