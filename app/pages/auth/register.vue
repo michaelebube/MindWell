@@ -177,7 +177,7 @@ const handleRegister = async () => {
 
     // Wait 3 seconds then redirect (user is already authenticated)
     setTimeout(() => {
-      router.push('/onboarding/mood-log')
+      router.push('/mood-log')
     }, 3000)
   } catch (err) {
     console.error('Registration error:', err)

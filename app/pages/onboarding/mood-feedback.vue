@@ -1,7 +1,12 @@
 <template>
-    <div>
-        
-    </div>
+  <div></div>
 </template>
 
-<script setup></script>
+<script setup lang="ts">
+definePageMeta({
+  layout: 'app',
+  path: '/mood-feedback',
+})
+</script>
+
+<style scoped></style>
