@@ -31,14 +31,14 @@
                 
                 <!-- Content on top of wave -->
                 <div class="relative z-10 flex flex-col items-center justify-center xs:pb-13 pb-8">
-                    <h1 class="text-white xs:text-[16px] text-[14px] font-semibold mb-2.5 flex items-center gap-2">
+                    <h1 class="text-white xs:text-[16px] text-[14px] font-semibold mb-4 flex items-center gap-2">
                         We are here to help
-                        <span class="text-[16px] xs:text-[14px]">🤗</span>
+                        <span class="text-[16px] xs:text-[14px]"><img :src="huggingIcon" alt="Hugging Icon"></span>
                     </h1>
                     
-                    <button class="bg-white text-[#80BA41] xs:px-6 px-5 xs:py-2 py-1.5 rounded-full xs:text-sm text-xs font-semibold hover:bg-gray-50 transition-colors mb-2 shadow-lg">
+                    <NuxtLink to="/auth/register" class="bg-white text-[#80BA41] xs:px-6 px-5 xs:py-2 py-1.5 rounded-xl xs:text-sm text-xs font-semibold hover:bg-gray-50 transition-colors mb-2 shadow-lg">
                         Let's get started
-                    </button>
+                    </NuxtLink>
                     
                     <p class="text-white xs:text-sm text-xs">
                         Have an account?
@@ -57,17 +57,31 @@ const { $auth, $firestore } = useNuxtApp()
 import logo from '../assets/svg/logo.svg'
 import wave from '../assets/svg/wave.svg'
 import bgImg from '../assets/images/bgImage.png'
+import huggingIcon from '../assets/svg/noto_people-hugging.svg'
 
 
 
 console.log($auth, $firestore)
 
-const showSplash = ref(false)
+const showSplash = ref(true)
 
-onBeforeMount(() => {
+onMounted(() => {
+    // Set timeout to hide splash screen after 3 seconds
     setTimeout(() => {
         showSplash.value = false
-    }, 3000) // 3 seconds
+    }, 3000)
+    
+    // Check screen size
+    const checkScreenSize = () => {
+        isSmallScreen.value = window.innerWidth <= 344 && window.innerHeight <= 600
+    }
+    
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+    
+    onUnmounted(() => {
+        window.removeEventListener('resize', checkScreenSize)
+    })
 })
 
 const introductoryStatements = [
@@ -84,16 +98,4 @@ const displayedStatements = computed(() => {
     return isSmallScreen.value ? introductoryStatements.slice(0, 4) : introductoryStatements
 })
 
-onMounted(() => {
-    // Check screen size
-    const checkScreenSize = () => {
-        isSmallScreen.value = window.innerWidth <= 344 && window.innerHeight <= 600
-    }
-    
-    checkScreenSize()
-    window.addEventListener('resize', checkScreenSize)
-    
-    onUnmounted(() => {
-        window.removeEventListener('resize', checkScreenSize)
-    })
-})</script>
+</script>

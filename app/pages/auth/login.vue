@@ -1,7 +1,11 @@
 <template>
     <div>
-        
+        <!-- Login form content goes here -->
     </div>
 </template>
 
-<script setup></script>
+<script setup>
+definePageMeta({
+    layout: 'auth'
+})
+</script>

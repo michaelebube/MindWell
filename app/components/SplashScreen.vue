@@ -1,7 +1,7 @@
 <template>
     <div class="relative h-screen w-screen overflow-hidden" >
 
-        <div class="absolute -top-1 -right-1 object-cover">
+        <div class="absolute -top-1 -right-1 object-cover z-10">
             <img :src="topSVG" alt="">
         </div>
         <!-- Background layer with opacity -->
@@ -11,7 +11,7 @@
             <img  :src="logo" alt="MindWell Logo">
         </div>
 
-        <div class="absolute -bottom-1 object-cover w-[105%]">
+        <div class="absolute -bottom-1 object-cover w-[105%] z-10">
             <img :src="footerSVG" alt="">
         </div>
     </div>
