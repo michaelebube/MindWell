@@ -2,10 +2,12 @@
     <div class="flex flex-col h-full">
         <div class="flex-1 flex flex-col items-center justify-center  px-6">
             <!-- Green message card -->
-            <div class="bg-[#80BA41] mt-4 text-white xs:px-16 px-6 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8">
+            <div class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-6 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2">
                 <p class="xs:text-[16px] text-sm xs:leading-5 leading-5  mb-4">
                     What would you like me to call you, friend ? 
                 </p>
+                <img :src="DownArrowIcon" alt="Down Arrow" width="16" height="16" class="mx-auto mb-4"/>
+
                 <p class="xs:text-[16px] text-sm xs:leading-5 leading-4">
                     You don’t have to use your real name if you’re not comfortable. This is a safe, judgment‑free space.
                 </p>
@@ -18,7 +20,8 @@
                 <input 
                     type="text" 
                     id="name"
-                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-xs  focus:outline-none bg-gray-100 focus:ring-2 focus:ring-[#80BA41] "
+                    autocomplete="off"
+                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-xs  text-[#80BA41] focus:outline-none bg-gray-100 focus:ring-2 focus:ring-[#80BA41] "
                 >
                 </div>
                
@@ -27,8 +30,8 @@
                 <input 
                     type="email" 
                     id="email"
-                   
-                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
+                    autocomplete="off"
+                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-[#80BA41] text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
                 >
                 </div>
                 
@@ -37,8 +40,8 @@
                 <input 
                     type="password" 
                     id="password"
-                    
-                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
+                    autocomplete="new-password"
+                    class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
                 >
                 </div>
                 
@@ -51,7 +54,9 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+    import DownArrowIcon from '../../assets/svg/down-arrow.svg'
+
 definePageMeta({
     layout: 'auth'
 })
