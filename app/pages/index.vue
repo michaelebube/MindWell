@@ -87,7 +87,7 @@ const displayedStatements = computed(() => {
 onMounted(() => {
     // Check screen size
     const checkScreenSize = () => {
-        isSmallScreen.value = window.innerWidth <= 380 && window.innerHeight <= 740
+        isSmallScreen.value = window.innerWidth <= 344 && window.innerHeight <= 600
     }
     
     checkScreenSize()
