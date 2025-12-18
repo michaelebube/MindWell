@@ -19,16 +19,24 @@
 
         <!-- Success State -->
         <template v-else-if="registrationState === 'success'">
-          <p class="xs:text-[16px] text-sm xs:leading-5 leading-5">
-            Yayy!!! Welcome to MindWell, {{ formData.name }}. You're going to love it here.
+          <p class="xs:text-lg text-[16px] xs:leading-6 leading-5 text-center tracking-wide">
+            Yayy!!! Welcome to MindWell,<br />
+            <span class="font-semibold">{{ formData.name }}.</span>
           </p>
+          <p class="mt-5 xs:text-lg text-[16px] xs:leading-6 leading-5 text-center tracking-wide">
+            You're going to love it here.
+          </p>
+          <img :src="blueHeartIcon" alt="" class="mx-auto -mb-5" />
         </template>
 
         <!-- Error State -->
         <template v-else-if="registrationState === 'error'">
-          <p class="xs:text-[16px] text-sm xs:leading-5 leading-5">
-            It's okay — don't feel bad. Let's try again together.
-          </p>
+          <div class="my-10">
+            <p class="xs:text-lg text-[16px] xs:leading-6 leading-5">
+              It's okay — don't feel bad. Let's try again together.
+            </p>
+            <img :src="huggingIcon" alt="Hugging Icon" class="mx-auto xs:w-14 xs:h-14 mt-7" />
+          </div>
         </template>
       </div>
 
@@ -37,18 +45,25 @@
         class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 space-y-3 rounded-xl px-6 py-8 mb-10 xs:mb-0"
       >
         <!-- Success Message -->
-        <div v-if="registrationState === 'success'" class="text-center text-white py-4">
-          <p class="xs:text-xl text-lg font-semibold">Account Created</p>
+        <div v-if="registrationState === 'success'" class="text-center text-white py-14">
+          <p class="xs:text-2xl text-lg font-bold">Account Created</p>
+          <img :src="greenTick" alt="Green Tick" class="mx-auto mt-2 xs:w-14 xs:h-14" />
         </div>
 
         <!-- Error Message -->
-        <div v-else-if="registrationState === 'error'" class="text-center text-white py-4">
-          <p class="xs:text-xl text-lg font-semibold">Error</p>
-          <p class="xs:text-sm text-xs mt-2">Please try again</p>
+        <div
+          v-else-if="registrationState === 'error'"
+          class="text-center text-white py-16 flex flex-col gap-1"
+        >
+          <p class="xs:text-xl text-lg font-bold xs:leading-6 leading-5">Error</p>
+          <img :src="errorIcon" alt="Error Icon" class="mx-auto mt-2 xs:w-14 xs:h-14" />
+          <p class="xs:text-lg text-[16px]mt-2 xs:leading-6 leading-5 font-medium">
+            Please try again
+          </p>
         </div>
 
         <!-- Form -->
-        <form v-else @submit.prevent="handleRegister" class="flex flex-col gap-3 space-y-3">
+        <form v-else class="flex flex-col gap-3 space-y-3" @submit.prevent="handleRegister">
           <div class="flex flex-col gap-1.5">
             <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs" for="name"
               >Anonymous Name</label
@@ -111,6 +126,10 @@
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import DownArrowIcon from '../../assets/svg/down-arrow.svg'
+import greenTick from '../../assets/svg/green_tick.svg'
+import huggingIcon from '../../assets/svg/noto_people-hugging.svg'
+import errorIcon from '../../assets/svg/error.svg'
+import blueHeartIcon from '../../assets/svg/blue-heart.svg'
 
 definePageMeta({
   layout: 'auth',

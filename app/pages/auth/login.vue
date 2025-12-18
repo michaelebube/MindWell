@@ -6,46 +6,47 @@
         class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-2 px-3 xs:py-10 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2"
       >
         <!-- Default State -->
-        <template v-if="loginState === 'idle'">
+        <template v-if="true">
           <p class="xs:text-[16px] text-sm xs:leading-5 leading-5 mb-4">Welcome back!</p>
           <p class="xs:text-[16px] text-sm xs:leading-5 leading-5 mb-4">
             We're glad to see you again. Log in to continue your journey toward better mental health
             — your space is safe and judgment-free.
           </p>
         </template>
-
-        <!-- Success State -->
-        <template v-else-if="loginState === 'success'">
-          <p class="xs:text-[16px] text-sm xs:leading-5 leading-5">
-            Welcome back! Redirecting you now...
-          </p>
-        </template>
-
-        <!-- Error State -->
-        <template v-else-if="loginState === 'error'">
-          <p class="xs:text-[16px] text-sm xs:leading-5 leading-5">
-            Hmm, that didn't work. Please check your email and password and try again.
-          </p>
-        </template>
       </div>
 
       <!-- Form container -->
       <div
-        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 space-y-3 rounded-xl px-6 py-8 mb-10 xs:mb-0"
+        class="flex flex-col gap-3 w-full xs:max-w-80 max-w-72 space-y-3 rounded-xl px-6 pt-4 pb-7 mb-10 xs:mb-0 relative overflow-hidden transition-all duration-300 bg-[#2558A6]"
+        :class="{ 'pt-12': loginState === 'success' || loginState === 'error' }"
       >
-        <!-- Success Message -->
-        <div v-if="loginState === 'success'" class="text-center text-white py-4">
-          <p class="xs:text-xl text-lg font-semibold">Login Successful</p>
+        <div
+          :class="{
+            'absolute top-0 left-0 w-full h-full bg-gray-300 opacity-75':
+              loginState === 'success' || loginState === 'error',
+          }"
+        ></div>
+        <!-- Success Banner -->
+        <div
+          v-if="loginState === 'success'"
+          class="absolute top-0 left-0 right-0 bg-[#2E7D32] text-white text-center py-2 xs:text-sm text-xs font-semibold animate-slideDown"
+        >
+          Log-in successful!
         </div>
 
-        <!-- Error Message -->
-        <div v-else-if="loginState === 'error'" class="text-center text-white py-4">
-          <p class="xs:text-xl text-lg font-semibold">Login Failed</p>
-          <p class="xs:text-sm text-xs mt-2">Please try again</p>
+        <!-- Error Banner -->
+        <div
+          v-if="loginState === 'error'"
+          class="absolute top-0 left-0 right-0 bg-[#C62828] text-white text-center py-2 xs:text-sm text-xs font-semibold animate-slideDown"
+        >
+          oppss.. please try again.
         </div>
 
         <!-- Form -->
-        <form v-else @submit.prevent="handleLogin" class="flex flex-col gap-3 space-y-3">
+        <form
+          class="flex flex-col gap-3 space-y-3 transition-all duration-300"
+          @submit.prevent="handleLogin"
+        >
           <div class="flex flex-col gap-1.5">
             <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs" for="email"
               >Email</label
@@ -56,6 +57,7 @@
               type="email"
               autocomplete="email"
               required
+              :disabled="loginState === 'success' || loginState === 'error'"
               class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-[#80BA41] text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
             />
           </div>
@@ -66,20 +68,34 @@
               for="password"
               >Password</label
             >
-            <input
-              id="password"
-              v-model="formData.password"
-              type="password"
-              autocomplete="current-password"
-              required
-              class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41] xs:mb-5 mb-2.5"
-            />
+            <div class="relative">
+              <input
+                id="password"
+                v-model="formData.password"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+                required
+                :disabled="loginState === 'success' || loginState === 'error'"
+                class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41] xs:mb-5 mb-2.5 pr-10"
+              />
+              <button
+                v-if="formData.password.length > 0"
+                type="button"
+                :disabled="loginState === 'success' || loginState === 'error'"
+                class="absolute right-3 top-1/2 -translate-y-6/7 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                :class="{ 'xs:mb-2.5 mb-1.5': true }"
+                @click="showPassword = !showPassword"
+              >
+                <img v-if="showPassword" :src="showPasswordIcon" alt="Show Password Icon" />
+                <img v-else :src="hidePasswordIcon" alt="Hide Password Icon" />
+              </button>
+            </div>
           </div>
 
           <div>
             <button
               type="submit"
-              :disabled="loading"
+              :disabled="loading || loginState === 'success' || loginState === 'error'"
               class="w-full bg-[#80BA41] text-white xs:py-3 py-2.5 rounded-lg xs:text-sm text-xs font-semibold hover:bg-[#6fa535] transition-colors mt-2 xs:mb-5 mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ loading ? 'Logging in...' : 'Log in' }}
@@ -101,6 +117,8 @@
 
 <script setup lang="ts">
 import { signInWithEmailAndPassword } from 'firebase/auth'
+import showPasswordIcon from '../../assets/svg/show-password.svg'
+import hidePasswordIcon from '../../assets/svg/hide-password.svg'
 
 definePageMeta({
   layout: 'auth',
@@ -117,6 +135,7 @@ const formData = ref({
 
 const loading = ref(false)
 const loginState = ref<'idle' | 'success' | 'error'>('idle')
+const showPassword = ref(false)
 
 const handleLogin = async () => {
   try {
@@ -131,7 +150,7 @@ const handleLogin = async () => {
 
     // Wait 2 seconds then redirect
     setTimeout(() => {
-      router.push('/onboarding/mood-log')
+      router.push('/mood-log')
     }, 2000)
   } catch (err) {
     console.error('Login error:', err)
