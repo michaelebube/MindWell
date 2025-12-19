@@ -109,7 +109,7 @@
               "
               class="w-full text-white xs:py-3 py-2.5 rounded-lg xs:text-sm text-xs bg-[#80BA41] hover:bg-[#6fa535] font-semibold transition-colors mt-2 xs:mb-5 mb-3 disabled:cursor-not-allowed"
               :class="{
-                'bg-[#808000] hover:bg-[#6b6b00]': !isFormValid && loginState === 'idle',
+                'bg-[#99A987] hover:bg-[#8a9a6f]': !isFormValid && loginState === 'idle',
                 'bg-gray-400': loginState === 'success' || loginState === 'error',
               }"
             >
