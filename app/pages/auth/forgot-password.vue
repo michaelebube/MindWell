@@ -60,6 +60,7 @@
             <form
                v-else
                class="flex flex-col gap-3 space-y-3"
+               :class="{ 'mt-6': resetState !== 'idle' }"
                @submit.prevent="handlePasswordReset"
             >
                <div class="flex flex-col gap-1.5">
@@ -76,6 +77,7 @@
                      required
                      placeholder="Enter your email"
                      class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-[#80BA41] text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
+
                   />
                </div>
 
