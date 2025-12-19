@@ -111,8 +111,11 @@
 
           <button
             type="submit"
-            :disabled="loading"
+            :disabled="loading || !isFormValid"
             class="w-full bg-[#80BA41] text-white xs:py-3 py-2.5 rounded-lg xs:text-sm text-xs font-semibold hover:bg-[#6fa535] transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            :class="{
+              'bg-[#808000] hover:bg-[#6b6b00]': !isFormValid,
+            }"
           >
             {{ loading ? 'Creating Account...' : 'Create Account' }}
           </button>
@@ -148,12 +151,13 @@ const formData = ref({
 const loading = ref(false)
 const registrationState = ref<'idle' | 'success' | 'error'>('idle')
 
-// Store user credentials in state
-const userCredentials = useState('userCredentials', () => ({
-  name: '',
-  email: '',
-  password: '',
-}))
+const isFormValid = computed(() => {
+  return (
+    formData.value.email.trim() !== '' &&
+    formData.value.password.trim() !== '' &&
+    formData.value.name.trim() !== ''
+  )
+})
 
 const handleRegister = async () => {
   try {
@@ -182,13 +186,6 @@ const handleRegister = async () => {
       console.log('User data saved to Firestore successfully')
     } catch (firestoreErr) {
       console.warn('Firestore save failed (non-critical):', firestoreErr)
-    }
-
-    // Store credentials in state
-    userCredentials.value = {
-      name: formData.value.name,
-      email: formData.value.email,
-      password: formData.value.password,
     }
 
     // Show success state

@@ -1,6 +1,15 @@
 <template>
   <div class="flex flex-col h-full">
     <div class="flex-1 flex flex-col items-center justify-center px-6">
+      <!-- Password Reset Success Banner -->
+      <div
+        v-if="showResetSuccess"
+        class="bg-[#2E7D32] text-white xs:px-6 px-4 xs:py-4 py-3 rounded-lg xs:max-w-80 max-w-72 text-center mb-4 animate-bounce"
+      >
+        <p class="xs:text-[16px] text-sm font-semibold mb-1">✅ Password Reset Successful!</p>
+        <p class="xs:text-sm text-xs opacity-90">You can now log in with your new password.</p>
+      </div>
+
       <!-- Green message card -->
       <div
         class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-2 px-3 xs:py-10 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2"
@@ -29,7 +38,7 @@
         <!-- Success Banner -->
         <div
           v-if="loginState === 'success'"
-          class="absolute top-0 left-0 right-0 bg-[#2E7D32] text-white text-center py-2 xs:text-sm text-xs font-semibold animate-slideDown"
+          class="absolute top-0 left-0 right-0 bg-[#2E7D32] text-white text-center rounded-t-lg py-2 xs:text-sm text-xs font-semibold animate-slideDown"
         >
           Log-in successful!
         </div>
@@ -37,7 +46,7 @@
         <!-- Error Banner -->
         <div
           v-if="loginState === 'error'"
-          class="absolute top-0 left-0 right-0 bg-[#C62828] text-white text-center py-2 xs:text-sm text-xs font-semibold animate-slideDown"
+          class="absolute top-0 left-0 right-0 bg-[#C62828] text-white text-center rounded-t-lg py-2 xs:text-sm text-xs font-semibold animate-slideDown"
         >
           oppss.. please try again.
         </div>
@@ -58,7 +67,7 @@
               autocomplete="email"
               required
               :disabled="loginState === 'success' || loginState === 'error'"
-              class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-[#80BA41] text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41]"
+              class="w-full xs:px-4 px-3 xs:py-3 py-2.5 border border-gray-300 rounded-lg xs:text-sm text-[#80BA41] text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -76,7 +85,7 @@
                 autocomplete="current-password"
                 required
                 :disabled="loginState === 'success' || loginState === 'error'"
-                class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41] xs:mb-5 mb-2.5 pr-10"
+                class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] border border-gray-300 rounded-lg xs:text-sm text-xs bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#80BA41] xs:mb-5 mb-2.5 pr-10 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
               />
               <button
                 v-if="formData.password.length > 0"
@@ -95,8 +104,14 @@
           <div>
             <button
               type="submit"
-              :disabled="loading || loginState === 'success' || loginState === 'error'"
-              class="w-full bg-[#80BA41] text-white xs:py-3 py-2.5 rounded-lg xs:text-sm text-xs font-semibold hover:bg-[#6fa535] transition-colors mt-2 xs:mb-5 mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="
+                !isFormValid || loading || loginState === 'success' || loginState === 'error'
+              "
+              class="w-full text-white xs:py-3 py-2.5 rounded-lg xs:text-sm text-xs bg-[#80BA41] hover:bg-[#6fa535] font-semibold transition-colors mt-2 xs:mb-5 mb-3 disabled:cursor-not-allowed"
+              :class="{
+                'bg-[#808000] hover:bg-[#6b6b00]': !isFormValid && loginState === 'idle',
+                'bg-gray-400': loginState === 'success' || loginState === 'error',
+              }"
             >
               {{ loading ? 'Logging in...' : 'Log in' }}
             </button>
@@ -127,6 +142,7 @@ definePageMeta({
 
 const { $auth } = useNuxtApp()
 const router = useRouter()
+const route = useRoute()
 
 const formData = ref({
   email: '',
@@ -136,6 +152,26 @@ const formData = ref({
 const loading = ref(false)
 const loginState = ref<'idle' | 'success' | 'error'>('idle')
 const showPassword = ref(false)
+const showResetSuccess = ref(false)
+
+const isFormValid = computed(() => {
+  return formData.value.email.trim() !== '' && formData.value.password.trim() !== ''
+})
+
+// Check for password reset redirect on mount
+onMounted(() => {
+  // Check if user came from password reset
+  if (route.query.mode === 'resetPassword') {
+    showResetSuccess.value = true
+
+    // Auto-hide success banner after 5 seconds
+    setTimeout(() => {
+      showResetSuccess.value = false
+      // Clean up the URL query parameters
+      router.replace('/login')
+    }, 5000)
+  }
+})
 
 const handleLogin = async () => {
   try {
