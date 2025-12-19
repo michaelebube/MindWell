@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, Timestamp } from 'firebase/firestore'
+import { collection, addDoc, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore'
 
 export const useMoodLog = () => {
   const { $auth, $firestore } = useNuxtApp()
@@ -70,9 +70,36 @@ export const useMoodLog = () => {
     }
   }
 
+  const getLatestMoodLog = async () => {
+    if (!$auth.currentUser) throw new Error('User not authenticated')
+
+    try {
+      const moodLogsRef = collection($firestore, 'moodLogs')
+      const q = query(
+        moodLogsRef,
+        where('userId', '==', $auth.currentUser.uid),
+        orderBy('createdAt', 'desc'),
+        limit(1)
+      )
+
+      const snapshot = await getDocs(q)
+      if (snapshot.empty) return null
+
+      const doc = snapshot.docs[0]
+      return {
+        id: doc?.id,
+        ...doc?.data(),
+      }
+    } catch (error) {
+      console.error('Error fetching latest mood log:', error)
+      throw error
+    }
+  }
+
   return {
     logMood,
     hasMoodLoggedToday,
     getUserMoodLogs,
+    getLatestMoodLog,
   }
 }
