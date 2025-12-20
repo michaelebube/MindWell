@@ -1,21 +1,46 @@
 import { collection, addDoc, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore'
+import { onAuthStateChanged, type User } from 'firebase/auth'
+
+interface MoodLog {
+  id: string
+  userId: string
+  mood: string
+  createdAt: Timestamp
+  date: string
+  sessionId: string
+}
 
 export const useMoodLog = () => {
   const { $auth, $firestore } = useNuxtApp()
+
+  // Helper to wait for auth state to be ready
+  const waitForAuth = (): Promise<User | null> => {
+    return new Promise((resolve) => {
+      if ($auth.currentUser) {
+        resolve($auth.currentUser)
+      } else {
+        const unsubscribe = onAuthStateChanged($auth, (user) => {
+          unsubscribe()
+          resolve(user)
+        })
+      }
+    })
+  }
 
   const generateSessionId = () => {
     return `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
   }
 
   const logMood = async (mood: string) => {
-    if (!$auth.currentUser) throw new Error('User not authenticated')
+    const user = await waitForAuth()
+    if (!user) throw new Error('User not authenticated')
 
     const today = new Date()
-    const dateString = today.toISOString().split('T')[0] // YYYY-MM-DD
+    const dateString = today.toISOString().split('T')[0] 
 
     try {
       const moodLogData = {
-        userId: $auth.currentUser.uid,
+        userId: user.uid,
         mood,
         createdAt: Timestamp.now(),
         date: dateString,
@@ -31,7 +56,8 @@ export const useMoodLog = () => {
   }
 
   const hasMoodLoggedToday = async (): Promise<boolean> => {
-    if (!$auth.currentUser) return false
+    const user = await waitForAuth()
+    if (!user) return false
 
     const today = new Date()
     today.setHours(0, 0, 0, 0)
@@ -40,7 +66,7 @@ export const useMoodLog = () => {
       const moodLogsRef = collection($firestore, 'moodLogs')
       const q = query(
         moodLogsRef,
-        where('userId', '==', $auth.currentUser.uid),
+        where('userId', '==', user.uid),
         where('createdAt', '>=', Timestamp.fromDate(today))
       )
 
@@ -53,11 +79,12 @@ export const useMoodLog = () => {
   }
 
   const getUserMoodLogs = async () => {
-    if (!$auth.currentUser) throw new Error('User not authenticated')
+    const user = await waitForAuth()
+    if (!user) throw new Error('User not authenticated')
 
     try {
       const moodLogsRef = collection($firestore, 'moodLogs')
-      const q = query(moodLogsRef, where('userId', '==', $auth.currentUser.uid))
+      const q = query(moodLogsRef, where('userId', '==', user.uid))
 
       const snapshot = await getDocs(q)
       return snapshot.docs.map((doc) => ({
@@ -70,14 +97,15 @@ export const useMoodLog = () => {
     }
   }
 
-  const getLatestMoodLog = async () => {
-    if (!$auth.currentUser) throw new Error('User not authenticated')
+  const getLatestMoodLog = async (): Promise<MoodLog | null> => {
+    const user = await waitForAuth()
+    if (!user) throw new Error('User not authenticated')
 
     try {
       const moodLogsRef = collection($firestore, 'moodLogs')
       const q = query(
         moodLogsRef,
-        where('userId', '==', $auth.currentUser.uid),
+        where('userId', '==', user.uid),
         orderBy('createdAt', 'desc'),
         limit(1)
       )
@@ -89,7 +117,7 @@ export const useMoodLog = () => {
       return {
         id: doc?.id,
         ...doc?.data(),
-      }
+      } as MoodLog
     } catch (error) {
       console.error('Error fetching latest mood log:', error)
       throw error

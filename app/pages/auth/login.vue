@@ -143,6 +143,7 @@ definePageMeta({
 const { $auth } = useNuxtApp()
 const router = useRouter()
 const route = useRoute()
+const { hasMoodLoggedToday } = useMoodLog()
 
 const formData = ref({
   email: '',
@@ -184,9 +185,16 @@ const handleLogin = async () => {
     // Show success state
     loginState.value = 'success'
 
-    // Wait 2 seconds then redirect
+    // Check if user has already logged mood today
+    const hasLoggedMood = await hasMoodLoggedToday()
+
+    // Wait 2 seconds then redirect based on mood status
     setTimeout(() => {
-      router.push('/mood-log')
+      if (hasLoggedMood) {
+        router.push('/chat')
+      } else {
+        router.push('/mood-log')
+      }
     }, 2000)
   } catch (err) {
     console.error('Login error:', err)
