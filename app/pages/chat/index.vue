@@ -22,11 +22,21 @@
       @close="sidebarOpen = false"
       @new-chat="handleNewChat"
       @select-chat="handleSelectChat"
-      @logout="handleLogout"
+      @delete-chat="handleDeleteChat"
+      @go-to-profile="navigateTo('/profile')"
+      @go-to-mood-meter="navigateTo('/mood-meter')"
+      @go-to-logout-modal="logoutModalOpen = true"
     />
 
     <!-- SOS Modal -->
     <SOSModal :is-open="sosModalOpen" @close="sosModalOpen = false" />
+
+    <!-- Logout Modal -->
+    <ChatLogoutModal
+      :is-open="logoutModalOpen"
+      @close="logoutModalOpen = false"
+      @confirm="handleLogout"
+    />
 
     <!-- Messages Area -->
     <div ref="messagesContainer" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 z-10">
@@ -66,6 +76,7 @@ import { signOut } from 'firebase/auth'
 import type { Message, Chat } from '~/composables/useChat'
 import bgImg from '../../assets/images/bgImage.png'
 import logo from '../../assets/svg/logo.svg'
+import type LogoutModalVue from '~/components/chat/LogoutModal.vue'
 
 definePageMeta({
   layout: 'app',
@@ -87,6 +98,7 @@ const {
 // State
 const sidebarOpen = ref(false)
 const sosModalOpen = ref(false)
+const logoutModalOpen = ref(false)
 const messages = ref<Message[]>([])
 const chats = ref<Chat[]>([])
 const activeChatId = ref('')
@@ -270,9 +282,17 @@ const handleSelectChat = async (chatId: string) => {
   }
 }
 
+// Handle delete chat
+const handleDeleteChat = async (chatId: string) => {
+  // TODO: Implement delete chat logic
+  console.log('Delete chat:', chatId)
+}
+
 // Handle logout
 const handleLogout = async () => {
   try {
+    logoutModalOpen.value = false
+    sidebarOpen.value = false
     await signOut($auth)
     router.push('/login')
   } catch (error) {
