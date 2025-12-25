@@ -1,7 +1,16 @@
 <template>
-  <div class="h-screen flex flex-col bg-gray-50">
+  <div class="h-screen flex flex-col bg-gray-50 relative">
+    <div
+      class="absolute z-0 inset-0 opacity-5 bg-cover bg-center bg-no-repeat"
+      :style="{ backgroundImage: `url(${bgImg})` }"
+    ></div>
+
     <!-- Header -->
-    <ChatHeader @toggle-sidebar="sidebarOpen = true" @sos-click="sosModalOpen = true" />
+    <ChatHeader
+      class="z-10"
+      @toggle-sidebar="sidebarOpen = true"
+      @sos-click="sosModalOpen = true"
+    />
 
     <!-- Sidebar -->
     <ChatSidebar
@@ -20,34 +29,15 @@
     <SOSModal :is-open="sosModalOpen" @close="sosModalOpen = false" />
 
     <!-- Messages Area -->
-    <div ref="messagesContainer" class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+    <div ref="messagesContainer" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 z-10">
       <!-- Welcome message if no messages -->
       <div
         v-if="messages.length === 0 && !isLoading"
         class="flex flex-col items-center justify-center h-full text-center px-6"
       >
-        <div
-          class="w-16 h-16 xs:w-20 xs:h-20 rounded-full bg-[#80BA41]/20 flex items-center justify-center mb-4"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-8 h-8 xs:w-10 xs:h-10 text-[#80BA41]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-            />
-          </svg>
-        </div>
-        <h2 class="text-lg xs:text-xl font-semibold text-gray-800 mb-2">Welcome to MindWell</h2>
-        <p class="text-sm xs:text-base text-gray-500 max-w-xs">
-          I'm here to support you. Share how you're feeling, and let's talk through it together.
-        </p>
+        <h2 class="text-lg xs:text-xl font-semibold text-[#80BA41]">Welcome, {{ userName }}</h2>
+
+        <img :src="logo" alt="MindWell Logo" class="opacity-35 w-50 h-50 -mt-5" />
       </div>
 
       <!-- Messages -->
@@ -67,13 +57,15 @@
     </div>
 
     <!-- Input -->
-    <ChatInput :disabled="isBotTyping || isLoading" @send="handleSendMessage" />
+    <ChatInput class="z-10" :disabled="isBotTyping || isLoading" @send="handleSendMessage" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { signOut } from 'firebase/auth'
 import type { Message, Chat } from '~/composables/useChat'
+import bgImg from '../../assets/images/bgImage.png'
+import logo from '../../assets/svg/logo.svg'
 
 definePageMeta({
   layout: 'app',

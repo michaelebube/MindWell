@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-white border-t border-gray-200 px-4 py-3 xs:py-4">
-    <form @submit.prevent="handleSubmit" class="flex items-end gap-2 xs:gap-3">
+  <div class="px-4 py-3 xs:py-4">
+    <form class="flex gap-2 xs:gap-3" @submit.prevent="handleSubmit">
       <div class="flex-1 relative">
         <textarea
           ref="textareaRef"
           v-model="message"
           :disabled="disabled"
-          placeholder="Type your message..."
+          placeholder="What's bothering you?"
           rows="1"
-          class="w-full px-4 py-2.5 xs:py-3 bg-gray-100 rounded-2xl resize-none xs:text-sm text-xs focus:outline-none focus:ring-2 focus:ring-[#80BA41] disabled:opacity-50 disabled:cursor-not-allowed max-h-32 overflow-y-auto"
+          class="w-full px-4 py-2.5 xs:py-3 bg-[#80BA41] rounded-lg resize-none xs:text-sm text-xs focus:outline-none focus:ring-2 focus:ring-[#80BA41] disabled:opacity-50 disabled:cursor-not-allowed max-h-32 placeholder:text-[#FBFBFB]/60 text-[#FBFBFB] overflow-y-auto"
           @keydown="handleKeydown"
           @input="autoResize"
         />
@@ -16,22 +16,16 @@
       <button
         type="submit"
         :disabled="!canSend || disabled"
-        class="flex-shrink-0 w-10 h-10 xs:w-11 xs:h-11 rounded-full bg-[#80BA41] text-white flex items-center justify-center transition-all duration-200 hover:bg-[#6fa535] disabled:bg-gray-300 disabled:cursor-not-allowed"
+        class="w-10 h-10 xs:w-12 xs:h-11 rounded-lg bg-[#2558A6] text-white relative  transition-all duration-200 hover:bg-[#6fa535]  disabled:bg-gray-300 disabled:cursor-not-allowed"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-5 h-5 xs:w-6 xs:h-6"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-        </svg>
+        <img :src="sendIcon" alt="Send Icon" class="w-5 h-5 xs:w-10 xs:h-9 absolute left-1/2 top-1/2 transform -translate-x-1/3 -translate-y-2/5" />
       </button>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
+import sendIcon from '../../assets/svg/send-icon.svg'
 interface Props {
   disabled?: boolean
 }
