@@ -1,0 +1,214 @@
+<template>
+  <!-- Backdrop -->
+  <Transition name="fade">
+    <div v-if="isOpen" class="fixed inset-0 bg-black/50 z-40" @click="$emit('close')" />
+  </Transition>
+
+  <!-- Sidebar -->
+  <Transition name="slide">
+    <aside
+      v-if="isOpen"
+      class="fixed top-0 left-0 h-full w-56 xs:w-80 bg-white z-50 rounded-tr-[50px] rounded-br-[50px] flex flex-col shadow-xl"
+    >
+      <!-- Search Bar -->
+      <div class="xs:px-5 px-4 xs:pt-12 pt-10 pb-4">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 text-white/80"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search"
+            class="w-full pl-10 pr-4 py-2.5 bg-[#80BA41] text-white placeholder-white/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6fa535]"
+          />
+        </div>
+      </div>
+
+      <div class="mx-4 xs:mx-5 border-t border-[#80BA41]"></div>
+
+      <!-- New Chat Button -->
+      <div class="xs:px-5 px-4 py-4">
+        <button
+          class="flex items-center gap-2 text-[#80BA41] hover:text-[#6fa535] transition-colors text-xs xs:text-sm font-medium"
+          @click="$emit('newChat')"
+        >
+          <img :src="newChatIcon" alt="New Chat" class="w-4 h-4" />
+
+          New Chat
+        </button>
+      </div>
+
+      <!-- Divider -->
+      <div class="xs:mx-5 mx-4 border-t border-[#80BA41]"></div>
+
+      <!-- Chat History -->
+      <div class="flex-1 overflow-y-auto px-5 py-2">
+        <p
+          v-if="filteredChats.length === 0"
+          class="text-gray-500 text-center text-xs xs:text-sm py-4"
+        >
+          {{ searchQuery ? 'No chats found' : 'No previous chats' }}
+        </p>
+
+        <div v-else class="space-y-1">
+          <div
+            v-for="chat in filteredChats"
+            :key="chat.id"
+            class="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-b-0"
+          >
+            <button
+              class="flex-1 text-left text-sm text-gray-800 truncate hover:text-[#80BA41] transition-colors"
+              :class="{ 'text-[#80BA41] font-medium': chat.id === activeChatId }"
+              @click="$emit('selectChat', chat.id)"
+            >
+              {{ chat.title || 'New Chat' }}
+            </button>
+            <button
+              class="ml-2 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+              @click.stop="$emit('deleteChat', chat.id)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mx-5 border-t border-[#80BA41]"></div>
+
+      <!-- User Profile -->
+      <div class="xs:px-5 px-4 py-4 xs:pb-7.5 pb-5">
+        <button class="w-full flex items-center gap-3" @click="$emit('goToProfile')">
+          <img :src="profileIcon" alt="" />
+          <div class="flex-1 min-w-0 text-left">
+            <p class="text-sm font-medium text-[#80BA41] truncate">{{ userName }}</p>
+          </div>
+          <img
+            :src="rightArrowIcon"
+            alt="right arrow"
+            class="w-4 h-4 xs:w-5 xs:h-5 text-[#80BA41]"
+          />
+        </button>
+      </div>
+
+      <!-- User Profile -->
+      <div class="xs:px-5 px-4 xs:pb-7.5 pb-5">
+        <button class="w-full flex items-center gap-3" @click="$emit('goToMoodMeter')">
+          <img :src="moodMeterIcon" alt="" />
+          <div class="flex-1 min-w-0 text-left">
+            <p class="text-sm font-medium text-[#80BA41] truncate">Mood Meter</p>
+          </div>
+          <img
+            :src="rightArrowIcon"
+            alt="right arrow"
+            class="w-4 h-4 xs:w-5 xs:h-5 text-[#80BA41]"
+          />
+        </button>
+      </div>
+
+      <!-- User Profile -->
+      <div class="xs:px-5 px-4 xs:pb-7.5 pb-6">
+        <button class="w-full flex items-center gap-3" @click="$emit('goToLogoutModal')">
+          <img :src="logOutIcon" alt="" />
+          <div class="flex-1 min-w-0 text-left">
+            <p class="text-sm font-medium text-[#DD0025] truncate">Log out</p>
+          </div>
+          <img :src="redArrowIcon" alt="right arrow-red" class="w-4 h-4 xs:w-5 xs:h-5" />
+        </button>
+      </div>
+    </aside>
+  </Transition>
+</template>
+
+<script setup lang="ts">
+import newChatIcon from '../../assets/svg/new-chat.svg'
+import profileIcon from '../../assets/svg/profile.svg'
+import rightArrowIcon from '../../assets/svg/right-arrow.svg'
+import redArrowIcon from '../../assets/svg/red-arrow.svg'
+import moodMeterIcon from '../../assets/svg/mood-meter.svg'
+import logOutIcon from '../../assets/svg/logout.svg'
+
+interface Chat {
+  id: string
+  title?: string
+  updatedAt: Date | { toDate: () => Date }
+}
+
+interface Props {
+  isOpen: boolean
+  chats: Chat[]
+  activeChatId?: string
+  userName: string
+  userEmail: string
+}
+
+const props = withDefaults(defineProps<Props>(), { activeChatId: '' })
+
+defineEmits<{
+  (e: 'close'): void
+  (e: 'newChat'): void
+  (e: 'selectChat', chatId: string): void
+  (e: 'deleteChat', chatId: string): void
+  (e: 'goToProfile'): void
+  (e: 'goToMoodMeter'): void
+  (e: 'goToLogoutModal'): void
+}>()
+
+const searchQuery = ref('')
+
+const filteredChats = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return props.chats
+  }
+  const query = searchQuery.value.toLowerCase()
+  return props.chats.filter(chat => {
+    const title = (chat.title || 'New Chat').toLowerCase()
+    return title.includes(query)
+  })
+})
+</script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(-100%);
+}
+</style>
