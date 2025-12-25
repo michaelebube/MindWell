@@ -100,38 +100,46 @@
         </div>
       </div>
 
-       <div class="mx-5 border-t border-[#80BA41]"></div>
+      <div class="mx-5 border-t border-[#80BA41]"></div>
 
       <!-- User Profile -->
-      <div class="px-5  py-4 pb-7.5 ">
+      <div class="px-5 py-4 pb-7.5">
         <button class="w-full flex items-center gap-3" @click="$emit('goToProfile')">
-         <img :src="profileIcon" alt="">
+          <img :src="profileIcon" alt="" />
           <div class="flex-1 min-w-0 text-left">
             <p class="text-sm font-medium text-[#80BA41] truncate">{{ userName }}</p>
           </div>
-          <img :src="rightArrowIcon" alt="right arrow" class="w-4 h-4 xs:w-5 xs:h-5 text-[#80BA41]" />
+          <img
+            :src="rightArrowIcon"
+            alt="right arrow"
+            class="w-4 h-4 xs:w-5 xs:h-5 text-[#80BA41]"
+          />
         </button>
       </div>
 
-        <!-- User Profile -->
-      <div class="px-5  pb-7.5 ">
+      <!-- User Profile -->
+      <div class="px-5 pb-7.5">
         <button class="w-full flex items-center gap-3" @click="$emit('goToMoodMeter')">
-         <img :src="moodMeterIcon" alt="">
+          <img :src="moodMeterIcon" alt="" />
           <div class="flex-1 min-w-0 text-left">
             <p class="text-sm font-medium text-[#80BA41] truncate">Mood Meter</p>
           </div>
-          <img :src="rightArrowIcon" alt="right arrow" class="w-4 h-4 xs:w-5 xs:h-5 text-[#80BA41]" />
+          <img
+            :src="rightArrowIcon"
+            alt="right arrow"
+            class="w-4 h-4 xs:w-5 xs:h-5 text-[#80BA41]"
+          />
         </button>
       </div>
 
-       <!-- User Profile -->
-      <div class="px-5  pb-7.5 ">
+      <!-- User Profile -->
+      <div class="px-5 pb-7.5">
         <button class="w-full flex items-center gap-3" @click="$emit('goToLogoutModal')">
-         <img :src="logOutIcon" alt="">
+          <img :src="logOutIcon" alt="" />
           <div class="flex-1 min-w-0 text-left">
             <p class="text-sm font-medium text-[#DD0025] truncate">Log out</p>
           </div>
-          <img :src="rightArrowIcon" alt="right arrow" class="w-4 h-4 xs:w-5 xs:h-5 " />
+          <img :src="redArrowIcon" alt="right arrow-red" class="w-4 h-4 xs:w-5 xs:h-5" />
         </button>
       </div>
     </aside>
@@ -142,6 +150,7 @@
 import newChatIcon from '../../assets/svg/new-chat.svg'
 import profileIcon from '../../assets/svg/profile.svg'
 import rightArrowIcon from '../../assets/svg/right-arrow.svg'
+import redArrowIcon from '../../assets/svg/red-arrow.svg'
 import moodMeterIcon from '../../assets/svg/mood-meter.svg'
 import logOutIcon from '../../assets/svg/logout.svg'
 
@@ -168,7 +177,7 @@ defineEmits<{
   (e: 'deleteChat', chatId: string): void
   (e: 'goToProfile'): void
   (e: 'goToMoodMeter'): void
-    (e: 'goToLogoutModal'): void
+  (e: 'goToLogoutModal'): void
 }>()
 
 const searchQuery = ref('')
