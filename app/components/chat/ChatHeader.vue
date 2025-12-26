@@ -3,8 +3,8 @@
     <!-- Hamburger Menu -->
     <button
       class="flex items-center justify-center rounded-lg hover:bg-gray-10 transition-colors"
-      @click="$emit('toggleSidebar')"
       aria-label="Toggle sidebar"
+      @click="$emit('toggleSidebar')"
     >
       <img :src="hamburgerIcon" alt="Hamburger  Menu" class="pt-1.25" />
     </button>
