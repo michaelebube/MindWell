@@ -16,9 +16,13 @@
       <button
         type="submit"
         :disabled="!canSend || disabled"
-        class="w-10 h-10 xs:w-12 xs:h-11 rounded-lg bg-[#2558A6] text-white relative  transition-all duration-200 hover:bg-[#6fa535]  disabled:bg-gray-300 disabled:cursor-not-allowed"
+        class="w-10 h-10 xs:w-12 xs:h-11 rounded-lg bg-[#2558A6] text-white relative transition-all duration-200 hover:bg-[#6fa535] disabled:bg-gray-300 disabled:cursor-not-allowed"
       >
-        <img :src="sendIcon" alt="Send Icon" class="w-5 h-5 xs:w-10 xs:h-9 absolute left-1/2 top-1/2 transform -translate-x-1/3 -translate-y-2/5" />
+        <img
+          :src="sendIcon"
+          alt="Send Icon"
+          class="w-5 h-5 xs:w-10 xs:h-9 absolute left-1/2 top-1/2 transform -translate-x-1/3 -translate-y-2/5"
+        />
       </button>
     </form>
   </div>

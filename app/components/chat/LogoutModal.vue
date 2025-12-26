@@ -5,23 +5,27 @@
       <div class="absolute inset-0 bg-black/60" @click="$emit('close')" />
 
       <!-- Modal -->
-      <div class="relative bg-white rounded-lg shadow-xl w-full max-w-sm px-7 pt-8 pb-12 text-center">
+      <div
+        class="relative bg-white rounded-lg shadow-xl w-full max-w-sm px-7 pt-8 pb-12 text-center"
+      >
         <!-- Title -->
         <h3 class="text-lg font-semibold text-gray-800 mb-2">Log Out?</h3>
 
         <!-- Message -->
-        <p class="xs:text-lg text-[14px] text-gray-600 mb-6">Are you sure about this, {{ userName }}</p>
+        <p class="xs:text-lg text-[14px] text-gray-600 mb-6">
+          Are you sure about this, {{ userName }}
+        </p>
 
         <!-- Buttons -->
         <div class="flex gap-3">
           <button
-            class="flex-1 py-2.5 px-4 rounded-xl bg-[#80BA41] border border-[#80BA41] text-gray-700 font-medium hover:bg-gray-50 transition-colors text-white"
+            class="flex-1 py-2.5 px-4 rounded-xl bg-[#80BA41] border border-[#80BA41] font-medium hover:bg-gray-50 transition-colors text-white"
             @click="$emit('close')"
           >
             No
           </button>
           <button
-            class="flex-1 py-2.5 px-4 rounded-xl  border border-[#DD0025] text-[#DD0025] font-medium hover:bg-red-700 transition-colors"
+            class="flex-1 py-2.5 px-4 rounded-xl border border-[#DD0025] text-[#DD0025] font-medium hover:bg-red-700 transition-colors"
             @click="$emit('confirm')"
           >
             Yes
