@@ -6,11 +6,7 @@
     ></div>
 
     <!-- Header -->
-    <ChatHeader
-      class="z-10"
-      @toggle-sidebar="sidebarOpen = true"
-      @sos-click="sosModalOpen = true"
-    />
+    <ChatHeader class="z-10" @toggle-sidebar="sidebarOpen = true" @sos-click="navigateTo('/sos')" />
 
     <!-- Sidebar -->
     <ChatSidebar
@@ -27,9 +23,6 @@
       @go-to-mood-meter="navigateTo('/mood-meter')"
       @go-to-logout-modal="logoutModalOpen = true"
     />
-
-    <!-- SOS Modal -->
-    <SOSModal :is-open="sosModalOpen" @close="sosModalOpen = false" />
 
     <!-- Logout Modal -->
     <ChatLogoutModal
@@ -97,7 +90,6 @@ const {
 
 // State
 const sidebarOpen = ref(false)
-const sosModalOpen = ref(false)
 const logoutModalOpen = ref(false)
 const messages = ref<Message[]>([])
 const chats = ref<Chat[]>([])
