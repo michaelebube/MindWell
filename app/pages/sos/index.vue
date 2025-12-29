@@ -5,8 +5,8 @@
       :style="{ backgroundImage: `url(${bgImg})` }"
     ></div>
     <!-- Header -->
-    <div class="flex items-center justify-between xs:px-4 px-3 pt-8 pb-4">
-      <button
+    <div class="flex items-center justify-between xs:px-4 px-3 pt-8 pb-2 z-10">
+      <!-- <button
         @click="goBack"
         class="w-10 h-10 flex items-center justify-center rounded-full bg-[#80BA41] text-white"
       >
@@ -24,6 +24,11 @@
             d="M15 19l-7-7 7-7"
           />
         </svg>
+      </button> -->
+      <button aria-label="Go Back" @click="goBack">
+        <div class="bg-[#1565C0] w-10 h-9 rounded-lg flex items-center justify-center cursor-pointer ">
+          <img :src="backArrowIcon" alt="Back Arrow" class="w-9 h-9 p-2" />
+        </div>
       </button>
       <img :src="logo" alt="MindWell Logo" class="-mr-2 w-20 h-20" />
     </div>
@@ -119,15 +124,19 @@ import logo from '../../assets/svg/logo.svg'
 import loveSOSIcon from '../../assets/svg/love-sos.svg'
 import callIcon from '../../assets/svg/call-icon.svg'
 import bgImg from '../../assets/images/bgImage.png'
+import backArrowIcon from '../../assets/svg/back-arrow.svg'
 
 definePageMeta({
   layout: 'app',
   path: '/sos',
 })
 
-const router = useRouter()
-
 const goBack = () => {
-  router.back()
+  // Try to go back, fallback to chat page if no history
+  if (window.history.length > 1) {
+    window.history.back()
+  } else {
+    navigateTo('/chat')
+  }
 }
 </script>
