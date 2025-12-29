@@ -156,7 +156,7 @@
                   v-if="formData.confirmPassword.length > 0"
                   type="button"
                   :disabled="formState === 'success' || formState === 'error'"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   @click="showConfirmPassword = !showConfirmPassword"
                 >
                   <img
