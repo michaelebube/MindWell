@@ -19,7 +19,7 @@
         <!-- Buttons -->
         <div class="flex gap-3">
           <button
-            class="flex-1 py-2.5 px-4 rounded-xl bg-[#80BA41] border border-[#80BA41]  font-medium hover:bg-gray-50 transition-colors text-white"
+            class="flex-1 py-2.5 px-4 rounded-xl bg-[#80BA41] border border-[#80BA41] font-medium hover:bg-gray-50 transition-colors text-white"
             @click="$emit('close')"
           >
             No
