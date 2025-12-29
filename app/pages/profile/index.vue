@@ -81,7 +81,7 @@
                   id="currentPassword"
                   v-model="formData.currentPassword"
                   :type="showCurrentPassword ? 'text' : 'password'"
-                  autocomplete="current-password"
+                  autocomplete="off"
                   required
                   :disabled="formState === 'success' || formState === 'error'"
                   class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)] rounded-lg xs:text-xs text-[10px] bg-[#FBFBFB] focus:outline-none focus:ring-2 focus:ring-[#80BA41] pr-10 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
@@ -116,7 +116,7 @@
                   id="newPassword"
                   v-model="formData.newPassword"
                   :type="showNewPassword ? 'text' : 'password'"
-                  autocomplete="new-password"
+                  autocomplete= "off"
                   required
                   :disabled="formState === 'success' || formState === 'error'"
                   class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)] rounded-lg xs:text-xs text-[10px] bg-[#FBFBFB] focus:outline-none focus:ring-2 focus:ring-[#80BA41] pr-10 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
@@ -125,7 +125,7 @@
                   v-if="formData.newPassword.length > 0"
                   type="button"
                   :disabled="formState === 'success' || formState === 'error'"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   @click="showNewPassword = !showNewPassword"
                 >
                   <img v-if="showNewPassword" :src="showPasswordIcon" alt="Show Password Icon" />
@@ -147,16 +147,16 @@
                   id="confirmPassword"
                   v-model="formData.confirmPassword"
                   :type="showConfirmPassword ? 'text' : 'password'"
-                  autocomplete="new-password"
+                  autocomplete="off"
                   required
                   :disabled="formState === 'success' || formState === 'error'"
-                  class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)] rounded-lg xs:text-sm text-xs bg-[#FBFBFB]/70 focus:outline-none focus:ring-2 focus:ring-[#80BA41] pr-10 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)] rounded-lg xs:text-xs text-[10px]  bg-[#FBFBFB] focus:outline-none focus:ring-2 focus:ring-[#80BA41] pr-10 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
                 />
                 <button
                   v-if="formData.confirmPassword.length > 0"
                   type="button"
                   :disabled="formState === 'success' || formState === 'error'"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   @click="showConfirmPassword = !showConfirmPassword"
                 >
                   <img
@@ -250,26 +250,7 @@ const handleChangePassword = async () => {
     return
   }
 
-  // Validate passwords match
-  if (formData.value.newPassword !== formData.value.confirmPassword) {
-    errorMessage.value = 'New passwords do not match'
-    formState.value = 'error'
-    setTimeout(() => {
-      formState.value = 'idle'
-    }, 3000)
-    return
-  }
-
-  // Validate minimum password length
-  if (formData.value.newPassword.length < 6) {
-    errorMessage.value = 'Password must be at least 6 characters'
-    formState.value = 'error'
-    setTimeout(() => {
-      formState.value = 'idle'
-    }, 3000)
-    return
-  }
-
+  
   try {
     loading.value = true
     formState.value = 'idle'
@@ -285,6 +266,7 @@ const handleChangePassword = async () => {
     await updatePassword($auth.currentUser, formData.value.newPassword)
 
     // Show success state
+    loading.value = false
     formState.value = 'success'
 
     // Reset form after 2 seconds
@@ -295,7 +277,6 @@ const handleChangePassword = async () => {
         newPassword: '',
         confirmPassword: '',
       }
-      loading.value = false
     }, 2000)
   } catch (err: any) {
     console.error('Password change error:', err)
