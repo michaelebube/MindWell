@@ -114,12 +114,18 @@ definePageMeta({
   path: '/sos',
 })
 
+const router = useRouter()
+const route = useRoute()
+
 const goBack = () => {
-  // Try to go back, fallback to chat page if no history
-  if (window.history.length > 1) {
-    window.history.back()
-  } else {
-    navigateTo('/chat')
-  }
+  // Try to go back; if the route doesn't change, fallback to chat page
+  const currentPath = route.fullPath
+  router.back()
+
+  setTimeout(() => {
+    if (router.currentRoute.value.fullPath === currentPath) {
+      navigateTo('/chat')
+    }
+  }, 300)
 }
 </script>
