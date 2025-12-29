@@ -6,27 +6,10 @@
     ></div>
     <!-- Header -->
     <div class="flex items-center justify-between xs:px-4 px-3 pt-8 pb-2 z-10">
-      <!-- <button
-        @click="goBack"
-        class="w-10 h-10 flex items-center justify-center rounded-full bg-[#80BA41] text-white"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-      </button> -->
       <button aria-label="Go Back" @click="goBack">
-        <div class="bg-[#1565C0] w-10 h-9 rounded-lg flex items-center justify-center cursor-pointer ">
+        <div
+          class="bg-[#1565C0] w-10 h-9 rounded-lg flex items-center justify-center cursor-pointer"
+        >
           <img :src="backArrowIcon" alt="Back Arrow" class="w-9 h-9 p-2" />
         </div>
       </button>
