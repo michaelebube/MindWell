@@ -116,7 +116,7 @@
                   id="newPassword"
                   v-model="formData.newPassword"
                   :type="showNewPassword ? 'text' : 'password'"
-                  autocomplete= "off"
+                  autocomplete="off"
                   required
                   :disabled="formState === 'success' || formState === 'error'"
                   class="w-full xs:px-4 px-3 xs:py-3 py-2.5 text-[#80BA41] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_4px_6px_-1px_rgba(0,0,0,0.1)] rounded-lg xs:text-xs text-[10px] bg-[#FBFBFB] focus:outline-none focus:ring-2 focus:ring-[#80BA41] pr-10 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
