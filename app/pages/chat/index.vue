@@ -86,6 +86,7 @@ const {
   getChatMessages,
   subscribeToMessages,
   getTodayChat,
+  getBotResponse,
 } = useChat()
 
 // State
@@ -161,10 +162,8 @@ const handleSendMessage = async (content: string) => {
     // Show typing indicator
     isBotTyping.value = true
 
-    // Call your Cloud Function here to get AI response
-    // For now, we'll simulate with a timeout
-    // Replace this with actual Cloud Function call
-    const botResponse = await getBotResponse(content)
+    // Call Cloud Function to get AI response via Dialogflow
+    const botResponse = await getBotResponse(content, activeChatId.value)
 
     // Save bot response
     await saveBotMessage(activeChatId.value, botResponse.message, botResponse.isCrisis)
@@ -179,33 +178,6 @@ const handleSendMessage = async (content: string) => {
   } finally {
     isBotTyping.value = false
     scrollToBottom()
-  }
-}
-
-// Placeholder for Cloud Function call - replace with actual implementation
-const getBotResponse = async (
-  userMessage: string
-): Promise<{ message: string; isCrisis: boolean }> => {
-  // TODO: Replace with actual Cloud Function call
-  // const response = await $fetch('/api/chat', { method: 'POST', body: { message: userMessage, chatId: activeChatId.value } })
-
-  // Simulate delay
-  await new Promise(resolve => setTimeout(resolve, 1500))
-
-  // Simple placeholder response
-  const responses = [
-    'Thank you for sharing that with me. How does that make you feel?',
-    "I hear you. It sounds like you're going through a lot right now.",
-    "That's completely valid. Would you like to explore that feeling a bit more?",
-    'I appreciate you opening up. What do you think might help in this situation?',
-    "It takes courage to talk about these things. I'm here for you.",
-  ]
-
-  return {
-    message:
-      responses[Math.floor(Math.random() * responses.length)] ||
-      "I'm here to listen. Please share more.",
-    isCrisis: false,
   }
 }
 
