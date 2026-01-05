@@ -3,7 +3,6 @@
  * Handles personalized response generation for MindWell
  */
 
-
 import { GoogleGenAI } from '@google/genai';
 import { defineString } from 'firebase-functions/params';
 
@@ -11,19 +10,13 @@ import { defineString } from 'firebase-functions/params';
 const geminiApiKey = defineString('GEMINI_API_KEY');
 
 // Intent-specific guidance for Nigerian student context
-// These match the intents defined in Dialogflow CX
 const INTENT_GUIDANCE: Record<string, string> = {
-  // Greeting
   'greeting.intent': 
     "Respond warmly to the greeting. Ask how they're doing today in a caring, friendly way. Make them feel welcome to share.",
-
-  // Academic & Strike Issues
   'issue.strike': 
     "Focus on the frustration of delays and feeling 'stuck' due to ASUU/NASU strikes. Validate their frustration about wasted time, uncertain graduation dates, and the feeling of life being on hold.",
   'emotion.stress.academic': 
     "Focus on academic pressure - exams, carry-over fears, GPs, and deadlines. Acknowledge the intense pressure of Nigerian university grading systems. Remind them one result doesn't define their future.",
-
-  // Emotional States
   'emotion.sadness': 
     "Focus on their low mood with gentle empathy. Help them feel heard and validated. Ask what's been weighing on them without pushing too hard.",
   'emotion.sapa': 
@@ -34,18 +27,12 @@ const INTENT_GUIDANCE: Record<string, string> = {
     "Focus on fears about life after school - job market wahala, NYSC, career uncertainty. Acknowledge the tough Nigerian job market but encourage hope. Many graduates face this fear.",
   'emotions.positive': 
     "Celebrate their positive mood! Reinforce the good feelings. Ask what's been going well and encourage them to hold onto these moments.",
-
-  // Family & Social Issues
   'issue.family_pressure': 
     "Focus on family expectations and pressure. Many Nigerian students face intense expectations from parents about grades, career choices, and life decisions. Validate that this pressure is real and heavy.",
   'issues.social': 
     "Focus on social challenges - friendships, fitting in, campus life, or feeling isolated. University social dynamics can be tough. Validate their experience.",
-
-  // Help Requests
   'help.request': 
     "The user is asking for help or advice. Focus on understanding what specific help they need first. Ask clarifying questions before offering guidance. Be supportive, not preachy.",
-
-  // Default fallback for unmatched intents
   'default': 
     "Focus on general emotional support and active listening. Ask clarifying questions to understand their situation better. Validate their feelings first."
 };
@@ -68,15 +55,10 @@ USER'S RECENT MOOD: {moodContext}
 
 CBT TECHNIQUES TO USE (when appropriate):
 1. **Cognitive Reframing**: Help them see situations from different perspectives
-   - "What if we looked at this differently..." / "Another way to see this..."
 2. **Identifying Thought Patterns**: Gently point out negative thinking patterns
-   - All-or-nothing thinking, catastrophizing, mind-reading, etc.
 3. **Behavioral Activation**: Encourage small, manageable actions
-   - "What's one small thing you could do today that might help?"
 4. **Grounding Techniques**: For anxiety, suggest present-moment focus
-   - "Let's take a breath together" / "What can you see/hear right now?"
 5. **Thought Challenging**: Help question unhelpful thoughts
-   - "What evidence supports/contradicts that thought?"
 6. **Problem-Solving**: Break down overwhelming problems into smaller steps
 
 RULES:
@@ -106,16 +88,12 @@ RESPONSE STYLE EXAMPLES:
 - "Ah, carry-over fear is real o. But let me tell you, one course no fit define your whole future..."
 - "I notice you might be thinking the worst will happen - that's called catastrophizing, and our minds do it sometimes. What if we looked at other possibilities?"`;
 
-/**
- * Crisis keywords for final safety check (English + Nigerian Pidgin)
- */
+// Crisis keywords
 const CRISIS_KEYWORDS = [
-  // English
   'kill myself', 'suicide', 'suicidal', 'end my life', 'want to die',
   'wanna die', 'better off dead', 'no reason to live', 'end it all',
   'hurt myself', 'harm myself', 'self-harm', 'cut myself', 'overdose',
   "can't go on", 'not worth living', 'take my life',
-  // Nigerian Pidgin
   'wan kpai', 'i wan kpai', 'wan die', 'i wan die', 'i go kpai',
   'make i kpai', 'wan end am', 'i wan end am', 'no wan live',
   'i no wan live again', 'life no get meaning', 'wetin be the point',
@@ -124,17 +102,6 @@ const CRISIS_KEYWORDS = [
   'comot for this world', 'e better make i die'
 ];
 
-/**
- * Check if message contains crisis language (final safety layer)
- */
-function containsCrisisLanguage(text: string): boolean {
-  const normalizedText = text.toLowerCase();
-  return CRISIS_KEYWORDS.some(keyword => normalizedText.includes(keyword));
-}
-
-/**
- * Safe crisis response when crisis is detected at LLM layer
- */
 const CRISIS_SAFE_RESPONSE = `I hear that you're going through something really difficult right now, and I'm concerned about you.
 
 Please reach out to someone who can help:
@@ -142,6 +109,11 @@ Please reach out to someone who can help:
 📞 SURPIN Helpline: +234 806 210 6493
 
 You don't have to face this alone. Would you like to talk about connecting with professional support?`;
+
+function containsCrisisLanguage(text: string): boolean {
+  const normalizedText = text.toLowerCase();
+  return CRISIS_KEYWORDS.some(keyword => normalizedText.includes(keyword));
+}
 
 /**
  * Generate a personalized response using Google Gemini
@@ -153,7 +125,7 @@ export async function generatePersonalizedResponse(
   moodContext?: { recentMood: string; moodScore: number } | null
 ): Promise<string> {
   
-  // SAFETY CHECK 1: Check user message for crisis language before calling LLM
+  // SAFETY CHECK 1: Check user message for crisis language
   if (containsCrisisLanguage(userMessage)) {
     console.log('Crisis language detected in user message - returning safe response');
     return CRISIS_SAFE_RESPONSE;
@@ -175,32 +147,37 @@ export async function generatePersonalizedResponse(
 
   try {
     // Initialize Gemini
+    const genAI = new GoogleGenAI({ 
+      apiKey: geminiApiKey.value()
+    });
 
-    const genAI = new GoogleGenAI({ apiKey: geminiApiKey.value(), httpOptions: { apiVersion: 'v1' } });
-
+    // Create chat with system instruction in the first message
     const chat = genAI.chats.create({
-  model: 'gemini-3-flash', // Using Gemini 3 Flash for optimal depth/cost
-  config: {
-    // Dedicated system instruction field (more secure/reliable)
-    systemInstruction: systemPrompt, 
-    temperature: 0.7,
-    topP: 0.9,
-    topK: 40,
-    maxOutputTokens: 256,
-  },
-  history: [
-    {
-      role: 'model',
-      parts: [{ text: 'Understood. I am MindWell AI, ready to support Nigerian students with empathy and cultural understanding.' }],
-    },
-  ],
-});
+      model: 'gemini-2.5-flash', // Use the latest available model
+      config: {
+        temperature: 0.7,
+        topP: 0.9,
+        topK: 40,
+        maxOutputTokens: 256,
+      },
+      // Include system prompt as the first message in history
+      history: [
+        {
+          role: 'user',
+          parts: [{ text: systemPrompt }],
+        },
+        {
+          role: 'model',
+          parts: [{ text: 'Understood. I am MindWell AI, ready to support Nigerian students with empathy and cultural understanding. I will follow all the guidelines and safety rules you provided.' }],
+        },
+      ],
+    });
 
     // Send the user message
-    const result = await chat.sendMessage({message:userMessage});
+    const result = await chat.sendMessage({ message: userMessage });
     const response = result.text;
 
-    // SAFETY CHECK 2: Check LLM output for crisis language (in case model hallucinates)
+    // SAFETY CHECK 2: Check LLM output for crisis language
     if (response && containsCrisisLanguage(response)) {
       console.log('Crisis language detected in LLM output - returning safe fallback');
       return getFallbackResponse(intentName);
@@ -210,7 +187,6 @@ export async function generatePersonalizedResponse(
 
   } catch (error) {
     console.error('Gemini API error:', error);
-    // Return a contextual fallback response
     return getFallbackResponse(intentName);
   }
 }
@@ -241,7 +217,6 @@ function getFallbackResponse(intentName: string): string {
  * Check if an intent should use LLM responses (non-crisis intents)
  */
 export function shouldUseLLM(intentName: string): boolean {
-  // Crisis intents should NOT use LLM - they need predefined safe responses
   const crisisIntents = [
     'situation.iscrisis',
     'situation.isCrisis',
