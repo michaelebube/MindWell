@@ -3,7 +3,8 @@
  * Handles personalized response generation for MindWell
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+
+import { GoogleGenAI } from '@google/genai';
 import { defineString } from 'firebase-functions/params';
 
 // Define Gemini API key param
@@ -174,34 +175,30 @@ export async function generatePersonalizedResponse(
 
   try {
     // Initialize Gemini
-    const genAI = new GoogleGenerativeAI(geminiApiKey.value());
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.9,
-        topK: 40,
-        maxOutputTokens: 256,
-      },
-    });
 
-    // Create the chat
-    const chat = model.startChat({
-      history: [
-        {
-          role: 'user',
-          parts: [{ text: `System Instructions: ${systemPrompt}` }],
-        },
-        {
-          role: 'model',
-          parts: [{ text: 'Understood. I am MindWell AI, ready to support Nigerian students with empathy and cultural understanding. I will follow all guidelines.' }],
-        },
-      ],
-    });
+    const genAI = new GoogleGenAI({ apiKey: geminiApiKey.value(), httpOptions: { apiVersion: 'v1' } });
+
+    const chat = genAI.chats.create({
+  model: 'gemini-3-flash', // Using Gemini 3 Flash for optimal depth/cost
+  config: {
+    // Dedicated system instruction field (more secure/reliable)
+    systemInstruction: systemPrompt, 
+    temperature: 0.7,
+    topP: 0.9,
+    topK: 40,
+    maxOutputTokens: 256,
+  },
+  history: [
+    {
+      role: 'model',
+      parts: [{ text: 'Understood. I am MindWell AI, ready to support Nigerian students with empathy and cultural understanding.' }],
+    },
+  ],
+});
 
     // Send the user message
-    const result = await chat.sendMessage(userMessage);
-    const response = result.response.text();
+    const result = await chat.sendMessage({message:userMessage});
+    const response = result.text;
 
     // SAFETY CHECK 2: Check LLM output for crisis language (in case model hallucinates)
     if (response && containsCrisisLanguage(response)) {

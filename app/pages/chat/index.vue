@@ -35,7 +35,7 @@
     <div ref="messagesContainer" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 z-10">
       <!-- Welcome message if no messages -->
       <div
-        v-if="messages.length === 0 && !isLoading"
+        v-if="messages.length === 0 && !isLoading && !isBotTyping"
         class="flex flex-col items-center justify-center h-full text-center px-6"
       >
         <h2 class="text-lg xs:text-xl font-semibold text-[#80BA41]">Welcome, {{ userName }}</h2>
@@ -44,7 +44,7 @@
       </div>
 
       <!-- Messages -->
-      <template v-else>
+      <template v-if="messages.length > 0">
         <ChatBubble
           v-for="message in messages"
           :key="message.id"
@@ -56,7 +56,7 @@
       </template>
 
       <!-- Typing indicator -->
-      <TypingIndicator v-if="isBotTyping" />
+      <ChatTypingIndicator v-if="isBotTyping" />
     </div>
 
     <!-- Input -->

@@ -27,12 +27,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const bubbleClasses = computed(() => {
   if (props.isUser) {
-    return 'bg-[#80BA41] text-white rounded-2xl rounded-br-sm'
+    return 'bg-[#1565C0] text-white rounded-2xl rounded-br-sm'
   }
   if (props.isCrisis) {
-    return 'bg-[#C62828] text-white rounded-2xl rounded-bl-sm'
+    return 'bg-[#80BA41] text-white rounded-2xl rounded-bl-sm'
   }
-  return 'bg-[#E8E8E8] text-gray-800 rounded-2xl rounded-bl-sm'
+  return 'bg-[#80BA41] text-white rounded-2xl rounded-bl-sm'
 })
 
 const formattedTime = computed(() => {

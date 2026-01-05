@@ -62,6 +62,7 @@ export async function detectIntent(
     const [response] = await client.detectIntent(request);
     
     const queryResult = response.queryResult;
+    console.log("Dialogflow CX queryResult is working");
     
     if (!queryResult) {
       throw new Error('No query result from Dialogflow');

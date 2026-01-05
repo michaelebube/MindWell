@@ -14,8 +14,7 @@ import {
 } from './services/llmService';
 import { 
   detectCrisisKeywords, 
-  getCrisisResponse,
-  buildCrisisAnalysisPrompt 
+  getCrisisResponse
 } from './utils/crisisDetection';
 
 // Initialize Firebase Admin
@@ -29,6 +28,9 @@ interface ChatResponse {
   intent?: string;
   confidence?: number;
 }
+
+
+
 
 /**
  * Main chat function - callable from the frontend
@@ -84,8 +86,9 @@ export const chatWithDialogflow = onCall<{
       
       try {
         dialogflowResponse = await detectIntent(message, chatId);
+       
       } catch (dialogflowError) {
-        console.error('Dialogflow error, using fallback:', dialogflowError);
+        console.error('Dialogflow error, using fallback with LLM:', dialogflowError);
         
         // If Dialogflow fails but we have medium-confidence crisis keywords
         if (keywordResult.isCrisis && keywordResult.confidence === 'medium') {
@@ -98,11 +101,20 @@ export const chatWithDialogflow = onCall<{
           };
         }
         
-        // Generic fallback response
+        // Dialogflow failed - use LLM directly with default intent for testing
+        // This allows local testing without Dialogflow deployment
+        const moodContext = await getMoodContext(userId);
+        const llmResponse = await generatePersonalizedResponse(
+          message,
+          'default', // Use default guidance when Dialogflow is unavailable
+          {},
+          moodContext
+        );
+        
         return {
-          message: "I'm here to listen and support you. Could you tell me more about how you're feeling?",
+          message: llmResponse,
           isCrisis: false,
-          intent: 'fallback',
+          intent: 'dialogflow_fallback_llm',
           confidence: 0,
         };
       }
@@ -302,7 +314,7 @@ async function getMoodContext(userId: string): Promise<{
 } | null> {
   try {
     const moodLogs = await db
-      .collection('mood_logs')
+      .collection('moodLogs')
       .where('userId', '==', userId)
       .orderBy('timestamp', 'desc')
       .limit(1)
