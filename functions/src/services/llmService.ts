@@ -122,7 +122,7 @@ export async function generatePersonalizedResponse(
     // Initialize Gemini
     const genAI = new GoogleGenerativeAI(geminiApiKey.value());
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-3.5-flash',
+      model: 'gemini-3-pro-preview',
       generationConfig: {
         temperature: 0.7,
         topP: 0.9,
