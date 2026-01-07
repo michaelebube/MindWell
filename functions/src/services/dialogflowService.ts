@@ -69,10 +69,18 @@ export async function detectIntent(
 
   try {
     // Send request to Dialogflow CX
+    console.log('Dialogflow detectIntent request:', JSON.stringify(request));
     const [response] = await client.detectIntent(request);
-    
+
+    console.log('Dialogflow raw response received');
+    try {
+      console.log(JSON.stringify(response, null, 2));
+    } catch (e) {
+      console.log('Could not stringify full response for logging', e);
+    }
+
     const queryResult = response.queryResult;
-    console.log("Dialogflow CX queryResult is working");
+    console.log('Dialogflow CX queryResult is working');
     
     if (!queryResult) {
       throw new Error('No query result from Dialogflow');

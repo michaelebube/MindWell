@@ -106,6 +106,31 @@ function buildHistory(
   ];
 }
 
+// Retry wrapper for Gemini calls with exponential backoff + jitter
+async function callGeminiWithRetries(
+  chat: any,
+  userMessage: string,
+  maxRetries = 3
+): Promise<any> {
+  let attempt = 0;
+  const baseDelay = 500; // ms
+  while (true) {
+    try {
+      const result = await chat.sendMessage({ message: userMessage });
+      return result;
+    } catch (err: any) {
+      attempt++;
+      const status = err?.status || err?.statusCode || err?.code || err?.response?.status;
+      // Do not retry on client errors (4xx)
+      if (status && status >= 400 && status < 500) throw err;
+      if (attempt > maxRetries) throw err;
+      const jitter = Math.floor(Math.random() * 300);
+      const delay = Math.pow(2, attempt - 1) * baseDelay + jitter;
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+}
+
 
 /**
  * Generate a personalized response using Google Gemini
@@ -136,10 +161,12 @@ export async function generatePersonalizedResponse(
     const recentMessages = await getRecentMessagesForLLM(chatId || '');
 
   // Build the system prompt
-  const systemPrompt = (await getSystemPrompt()).replace('{intentName}', intentName)
+  const base = (await getSystemPrompt()).replace('{intentName}', intentName)
     .replace('{specificGuidance}', specificGuidance)
     .replace('{moodContext}', moodString);
 
+    const systemPrompt = base + '\n\nBe concise: keep replies ≤ 80 words';
+    
   try {
     // Initialize Gemini
     const genAI = new GoogleGenAI({ 
@@ -153,14 +180,14 @@ export async function generatePersonalizedResponse(
         temperature: 0.7,
         topP: 0.9,
         topK: 40,
-        maxOutputTokens: 512,
+        maxOutputTokens: 300,
       },
       // Include system prompt as the first message in history
       history: buildHistory(systemPrompt, recentMessages),
     });
 
-    // Send the user message
-    const result = await chat.sendMessage({ message: userMessage });
+    // Send the user message (with retries for transient failures)
+    const result = await callGeminiWithRetries(chat, userMessage, 3);
     const response = result.text;
 
     // SAFETY CHECK 2: Check LLM output for crisis language

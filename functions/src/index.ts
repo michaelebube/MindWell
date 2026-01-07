@@ -45,6 +45,8 @@ export const chatWithDialogflow = onCall<{
     // Optional: Add rate limiting and other options
     enforceAppCheck: false, // Set to true in production with App Check
     cors: true,
+    // Grant access to secret values declared via defineSecret('SYSTEM_PROMPT')
+    secrets: ['SYSTEM_PROMPT'],
   },
   async (request): Promise<ChatResponse> => {
     // Verify authentication
@@ -111,7 +113,13 @@ export const chatWithDialogflow = onCall<{
       
       try {
         dialogflowResponse = await detectIntent(message, chatId, chatId);
-       
+       console.log('Dialogflow result:', {
+  intent: dialogflowResponse.intent,
+  confidence: dialogflowResponse.confidence,
+  isFallback: dialogflowResponse.isFallback,
+  isCrisis: dialogflowResponse.isCrisis,
+  responseTextPreview: dialogflowResponse.responseText?.slice?.(0,200)
+});
       } catch (dialogflowError) {
         console.error('Dialogflow error, using fallback with LLM:', dialogflowError);
         
@@ -275,6 +283,8 @@ export const chatWithDialogflow = onCall<{
 export const dialogflowWebhook = onRequest(
   {
     cors: true,
+    // webhook may call LLM personalization — include secret dependency
+    secrets: ['SYSTEM_PROMPT'],
   },
   async (req, res) => {
     if (req.method !== 'POST') {
@@ -315,7 +325,7 @@ export const dialogflowWebhook = onRequest(
         case 'crisis-escalation':
           // Handle crisis escalation
           responseText = getCrisisResponse(text);
-          targetPage = 'crisis-support'; // Route to crisis page in Dialogflow
+          // Route to crisis page in Dialogflow
           break;
 
         case 'personalized-response':
