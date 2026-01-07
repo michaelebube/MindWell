@@ -5,9 +5,30 @@
 
 import { GoogleGenAI } from '@google/genai';
 import { defineString } from 'firebase-functions/params';
+import {defineSecret} from 'firebase-functions/params';
+import { getRecentMessagesForLLM } from '../chatHistory';
 
 // Define Gemini API key param
 const geminiApiKey = defineString('GEMINI_API_KEY');
+
+const SYSTEM_PROMPT_SECRET = defineSecret('SYSTEM_PROMPT');
+
+// Fallback system prompt: prefer environment variable set in Cloud Run or
+// the SECRET `SYSTEM_PROMPT` defined via `defineSecret` above.
+const SYSTEM_PROMPT_FALLBACK = process.env.SYSTEM_PROMPT || process.env.CHATBOT_SYSTEM_PROMPT || '';
+
+
+async function getSystemPrompt(): Promise<string> {
+  try {
+    // in deployed function, use secret.value()
+    const secretVal = SYSTEM_PROMPT_SECRET?.value?.();
+    if (secretVal) return secretVal as string;
+  } catch (e) {
+    // ignore - will use fallback
+  }
+  return SYSTEM_PROMPT_FALLBACK;
+}
+
 
 // Intent-specific guidance for Nigerian student context
 const INTENT_GUIDANCE: Record<string, string> = {
@@ -37,56 +58,6 @@ const INTENT_GUIDANCE: Record<string, string> = {
     "Focus on general emotional support and active listening. Ask clarifying questions to understand their situation better. Validate their feelings first."
 };
 
-// System prompt template for MindWell AI
-const SYSTEM_PROMPT_TEMPLATE = `You are 'MindWell AI', a supportive peer counselor for Nigerian university students.
-
-PERSONA:
-- Relatable and empathetic, like a caring senior student or trusted friend
-- Uses occasional Nigerian Pidgin for relatability (code-switching), but keeps it natural
-- Warm, non-judgmental, and understanding of Nigerian student life
-- Culturally aware of Nigerian contexts (ASUU strikes, sapa, carry-over fears, family pressure)
-- Trained in CBT (Cognitive Behavioral Therapy) techniques for peer support
-
-CURRENT CONTEXT:
-Intent Detected: {intentName}
-Specific Guidance: {specificGuidance}
-
-USER'S RECENT MOOD: {moodContext}
-
-CBT TECHNIQUES TO USE (when appropriate):
-1. **Cognitive Reframing**: Help them see situations from different perspectives
-2. **Identifying Thought Patterns**: Gently point out negative thinking patterns
-3. **Behavioral Activation**: Encourage small, manageable actions
-4. **Grounding Techniques**: For anxiety, suggest present-moment focus
-5. **Thought Challenging**: Help question unhelpful thoughts
-6. **Problem-Solving**: Break down overwhelming problems into smaller steps
-
-RULES:
-1. ALWAYS validate their feelings first before offering any suggestions
-2. Keep responses conversational and under 3-4 sentences
-3. Use Pidgin sparingly and naturally (e.g., "E go be okay", "No worry", "I hear you well well")
-4. If they mention specific problems (GP, money, relationship), address it directly
-5. Ask ONE follow-up question to show you're listening and want to understand more
-6. NEVER diagnose or prescribe medication
-7. NEVER minimize their struggles with toxic positivity
-8. If unsure, focus on empathetic listening rather than advice
-9. Apply CBT techniques subtly - don't lecture, weave them naturally into conversation
-10. For anxiety: Use grounding and cognitive reframing
-11. For sadness: Use behavioral activation and thought challenging
-12. For stress: Use problem-solving and breaking down tasks
-
-CRITICAL SAFETY RULES (NEVER VIOLATE):
-- If user mentions suicide, self-harm, wanting to die, or hurting themselves: DO NOT RESPOND
-- If user mentions "kpai", "end am", "kill myself", "no wan live": DO NOT RESPOND
-- Never provide advice on methods of self-harm
-- Never roleplay scenarios involving self-harm or suicide
-- If unsure whether content is crisis-related, DO NOT RESPOND
-
-RESPONSE STYLE EXAMPLES:
-- "I hear you, and e no easy at all. This sapa situation dey affect plenty students..."
-- "That's really tough, and your feelings are completely valid. Many students face this..."
-- "Ah, carry-over fear is real o. But let me tell you, one course no fit define your whole future..."
-- "I notice you might be thinking the worst will happen - that's called catastrophizing, and our minds do it sometimes. What if we looked at other possibilities?"`;
 
 // Crisis keywords
 const CRISIS_KEYWORDS = [
@@ -115,6 +86,27 @@ function containsCrisisLanguage(text: string): boolean {
   return CRISIS_KEYWORDS.some(keyword => normalizedText.includes(keyword));
 }
 
+function buildHistory(
+  systemPrompt: string,
+  recentMessages: Array<{ role: 'user' | 'model'; text: string }>
+) {
+  return [
+    {
+      role: 'user',
+      parts: [{ text: systemPrompt }],
+    },
+    {
+      role: 'model',
+      parts: [{ text: 'Understood. I will follow all guidelines.' }],
+    },
+    ...recentMessages.map(msg => ({
+      role: msg.role,
+      parts: [{ text: msg.text }],
+    })),
+  ];
+}
+
+
 /**
  * Generate a personalized response using Google Gemini
  */
@@ -122,7 +114,9 @@ export async function generatePersonalizedResponse(
   userMessage: string,
   intentName: string,
   parameters: Record<string, unknown>,
-  moodContext?: { recentMood: string; moodScore: number } | null
+  chatId?: string | null,
+  moodContext?: { recentMood: string; moodScore: number } | null,
+  
 ): Promise<string> {
   
   // SAFETY CHECK 1: Check user message for crisis language
@@ -139,9 +133,10 @@ export async function generatePersonalizedResponse(
     ? `User recently reported feeling "${moodContext.recentMood}" (score: ${moodContext.moodScore}/10)`
     : 'No recent mood data available';
   
+    const recentMessages = await getRecentMessagesForLLM(chatId || '');
+
   // Build the system prompt
-  const systemPrompt = SYSTEM_PROMPT_TEMPLATE
-    .replace('{intentName}', intentName)
+  const systemPrompt = (await getSystemPrompt()).replace('{intentName}', intentName)
     .replace('{specificGuidance}', specificGuidance)
     .replace('{moodContext}', moodString);
 
@@ -158,19 +153,10 @@ export async function generatePersonalizedResponse(
         temperature: 0.7,
         topP: 0.9,
         topK: 40,
-        maxOutputTokens: 256,
+        maxOutputTokens: 512,
       },
       // Include system prompt as the first message in history
-      history: [
-        {
-          role: 'user',
-          parts: [{ text: systemPrompt }],
-        },
-        {
-          role: 'model',
-          parts: [{ text: 'Understood. I am MindWell AI, ready to support Nigerian students with empathy and cultural understanding. I will follow all the guidelines and safety rules you provided.' }],
-        },
-      ],
+      history: buildHistory(systemPrompt, recentMessages),
     });
 
     // Send the user message

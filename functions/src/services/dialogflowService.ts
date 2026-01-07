@@ -26,7 +26,8 @@ export interface DialogflowResponse {
  */
 export async function detectIntent(
   message: string,
-  sessionId: string
+  sessionId: string,
+  chatId: string
 ): Promise<DialogflowResponse> {
   const projectId = dialogflowProjectId.value();
   const location = dialogflowLocation.value();
@@ -55,6 +56,15 @@ export async function detectIntent(
       },
       languageCode,
     },
+    queryParams: {
+        parameters: {
+            fields: {
+                chatId: {
+                stringValue: chatId,
+                }
+        }
+    }
+    }
   };
 
   try {

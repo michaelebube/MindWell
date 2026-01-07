@@ -62,7 +62,23 @@ export const chatWithDialogflow = onCall<{
       throw new HttpsError('invalid-argument', 'Chat ID is required');
     }
 
+    // Log user message to Firestore
     try {
+  
+  //      console.log('=== CHAT FUNCTION CALLED ===');
+  // console.log('chatId:', chatId);
+  // console.log('userId:', userId);
+  // console.log('message:', message);
+  //       await db.collection('chats').doc(chatId).collection('messages').add({
+  //           chatId,
+  //           content: message,
+  //           role: 'user',
+  //           timestamp: new Date(),
+  //           userId: userId,
+  //           isCrisis: false
+  //       })
+
+  //         console.log('✅ User message saved to:', `chats/${chatId}/messages`);
       // Step 1: Quick crisis keyword detection (first layer)
       const keywordResult = detectCrisisKeywords(message);
       
@@ -70,6 +86,15 @@ export const chatWithDialogflow = onCall<{
       if (keywordResult.isCrisis && keywordResult.confidence === 'high') {
         console.log('Crisis detected via keywords:', keywordResult.matchedKeywords);
         
+         await db.collection('chats').doc(chatId).collection('messages').add({
+          chatId,
+          content: getCrisisResponse(message),
+          role: 'assistant',
+          timestamp: new Date(),
+          isCrisis: true,
+          intent: 'crisis_detected',
+        });
+
         // Log crisis event for monitoring
         await logCrisisEvent(userId, chatId, message, keywordResult.matchedKeywords);
         
@@ -85,13 +110,24 @@ export const chatWithDialogflow = onCall<{
       let dialogflowResponse: DialogflowResponse;
       
       try {
-        dialogflowResponse = await detectIntent(message, chatId);
+        dialogflowResponse = await detectIntent(message, chatId, chatId);
        
       } catch (dialogflowError) {
         console.error('Dialogflow error, using fallback with LLM:', dialogflowError);
         
         // If Dialogflow fails but we have medium-confidence crisis keywords
         if (keywordResult.isCrisis && keywordResult.confidence === 'medium') {
+          const crisisResponse = getCrisisResponse(message);
+          
+          // ✅ SAVE BOT RESPONSE
+          await db.collection('chats').doc(chatId).collection('messages').add({
+            chatId,
+            content: crisisResponse,
+            role: 'assistant',
+            timestamp: new Date(),
+            isCrisis: true,
+          });
+
           await logCrisisEvent(userId, chatId, message, keywordResult.matchedKeywords);
           return {
             message: getCrisisResponse(message),
@@ -108,8 +144,18 @@ export const chatWithDialogflow = onCall<{
           message,
           'default', // Use default guidance when Dialogflow is unavailable
           {},
+          chatId || null,
           moodContext
         );
+
+        // ✅ SAVE BOT RESPONSE
+          await db.collection('chats').doc(chatId).collection('messages').add({
+          chatId,
+          content: llmResponse,
+          role: 'assistant',
+          timestamp: new Date(),
+          isCrisis: false,
+        });
         
         return {
           message: llmResponse,
@@ -121,6 +167,18 @@ export const chatWithDialogflow = onCall<{
 
       // Step 3: Check if Dialogflow detected a crisis intent
       if (dialogflowResponse.isCrisis) {
+        const response = dialogflowResponse.responseText || getCrisisResponse(message);
+        // ✅ SAVE BOT RESPONSE
+        await db.collection('chats').doc(chatId).collection('messages').add({
+          chatId,
+          content: response,
+          role: 'assistant',
+          timestamp: new Date(),
+          isCrisis: true,
+          intent: dialogflowResponse.intent,
+        });
+
+
         await logCrisisEvent(userId, chatId, message, ['dialogflow_crisis_intent']);
         return {
           message: dialogflowResponse.responseText || getCrisisResponse(message),
@@ -134,9 +192,21 @@ export const chatWithDialogflow = onCall<{
       // If Dialogflow has low confidence and we have keyword matches, err on side of caution
       if (dialogflowResponse.isFallback && keywordResult.isCrisis) {
         console.log('Fallback with crisis keywords, treating as potential crisis');
+
+        const response = getCrisisResponse(message);
+        
+        // ✅ SAVE BOT RESPONSE
+        await db.collection('chats').doc(chatId).collection('messages').add({
+          chatId,
+          content: response,
+          role: 'assistant',
+          timestamp: new Date(),
+          isCrisis: true,
+        });
+
         await logCrisisEvent(userId, chatId, message, keywordResult.matchedKeywords);
         return {
-          message: getCrisisResponse(message),
+          message: response,
           isCrisis: true,
           intent: 'crisis_fallback_keywords',
           confidence: 0.6,
@@ -153,8 +223,18 @@ export const chatWithDialogflow = onCall<{
           message,
           dialogflowResponse.intent,
           dialogflowResponse.parameters,
+          chatId,
           moodContext
         );
+
+           await db.collection('chats').doc(chatId).collection('messages').add({
+          chatId,
+          content: personalizedMessage,
+          role: 'assistant',
+          timestamp: new Date(),
+          isCrisis: false,
+          intent: dialogflowResponse.intent,
+        });
 
         return {
           message: personalizedMessage,
@@ -165,6 +245,15 @@ export const chatWithDialogflow = onCall<{
       }
 
       // Step 6: Return Dialogflow response for any remaining cases
+       await db.collection('chats').doc(chatId).collection('messages').add({
+        chatId,
+        content: dialogflowResponse.responseText,
+        role: 'assistant',
+        timestamp: new Date(),
+        isCrisis: false,
+        intent: dialogflowResponse.intent,
+      });
+
       return {
         message: dialogflowResponse.responseText,
         isCrisis: false,
@@ -199,6 +288,7 @@ export const dialogflowWebhook = onRequest(
       // Extract session info
       const sessionInfo = body.sessionInfo || {};
       const parameters = sessionInfo.parameters || {};
+      const chatId = parameters.chatId as string || '';
       const tag = body.fulfillmentInfo?.tag || '';
       const text = body.text || '';
 
@@ -237,6 +327,7 @@ export const dialogflowWebhook = onRequest(
             text,
             intentName,
             parameters,
+            chatId,
             webhookMoodContext
           );
           break;

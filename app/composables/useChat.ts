@@ -121,11 +121,14 @@ export const useChat = () => {
 
       const userMsgRef = await addDoc(messagesRef, userMessageData)
 
+        // const response = await getBotResponse(content, chatId)
+
       // Update chat's updatedAt and title if first message
       const chatRef = doc($firestore, 'chats', chatId)
       const chatUpdate: Record<string, unknown> = { updatedAt: serverTimestamp() }
       
       // Set title from first message (truncated)
+      // const messagesRef = collection($firestore, 'chats', chatId, 'messages')
       const messagesSnapshot = await getDocs(query(messagesRef, where('role', '==', 'user')))
       if (messagesSnapshot.size === 1) {
         chatUpdate.title = content.slice(0, 50) + (content.length > 50 ? '...' : '')
@@ -133,6 +136,12 @@ export const useChat = () => {
       await updateDoc(chatRef, chatUpdate)
 
       return {
+      //     id: 'pending',
+      // chatId,
+      // content,
+      // role: 'user' as const,
+      // timestamp: Timestamp.now(),
+      // isCrisis: false,
         id: userMsgRef.id,
         ...userMessageData,
       }

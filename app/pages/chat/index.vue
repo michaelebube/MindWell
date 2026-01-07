@@ -165,16 +165,10 @@ const handleSendMessage = async (content: string) => {
     // Call Cloud Function to get AI response via Dialogflow
     const botResponse = await getBotResponse(content, activeChatId.value)
 
-    // Save bot response
-    await saveBotMessage(activeChatId.value, botResponse.message, botResponse.isCrisis)
+    // Bot response is written by the server; rely on realtime listener to receive it
   } catch (error) {
     console.error('Error sending message:', error)
-    // Save error message
-    await saveBotMessage(
-      activeChatId.value,
-      "I'm sorry, I'm having trouble responding right now. Please try again.",
-      false
-    )
+    // Optionally show an inline error; do not write assistant messages from client to avoid duplicates
   } finally {
     isBotTyping.value = false
     scrollToBottom()
