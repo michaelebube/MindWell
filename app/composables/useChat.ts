@@ -12,6 +12,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore'
 import { onAuthStateChanged, type User } from 'firebase/auth'
+import { httpsCallable, type Functions } from 'firebase/functions'
 
 export interface Message {
   id: string
@@ -31,8 +32,16 @@ export interface Chat {
   moodLogId?: string
 }
 
+// Response type from Cloud Function
+export interface ChatResponse {
+  message: string
+  isCrisis: boolean
+  intent?: string
+  confidence?: number
+}
+
 export const useChat = () => {
-  const { $auth, $firestore } = useNuxtApp()
+  const { $auth, $firestore, $functions } = useNuxtApp()
 
   // Helper to wait for auth state to be ready
   const waitForAuth = (): Promise<User | null> => {
@@ -112,11 +121,14 @@ export const useChat = () => {
 
       const userMsgRef = await addDoc(messagesRef, userMessageData)
 
+        // const response = await getBotResponse(content, chatId)
+
       // Update chat's updatedAt and title if first message
       const chatRef = doc($firestore, 'chats', chatId)
       const chatUpdate: Record<string, unknown> = { updatedAt: serverTimestamp() }
       
       // Set title from first message (truncated)
+      // const messagesRef = collection($firestore, 'chats', chatId, 'messages')
       const messagesSnapshot = await getDocs(query(messagesRef, where('role', '==', 'user')))
       if (messagesSnapshot.size === 1) {
         chatUpdate.title = content.slice(0, 50) + (content.length > 50 ? '...' : '')
@@ -124,6 +136,12 @@ export const useChat = () => {
       await updateDoc(chatRef, chatUpdate)
 
       return {
+      //     id: 'pending',
+      // chatId,
+      // content,
+      // role: 'user' as const,
+      // timestamp: Timestamp.now(),
+      // isCrisis: false,
         id: userMsgRef.id,
         ...userMessageData,
       }
@@ -231,6 +249,38 @@ export const useChat = () => {
     }
   }
 
+  // Get bot response from Dialogflow via Cloud Function
+  const getBotResponse = async (
+    userMessage: string,
+    chatId: string
+  ): Promise<ChatResponse> => {
+    const user = await waitForAuth()
+    if (!user) throw new Error('User not authenticated')
+
+    try {
+      // Call the Cloud Function
+      const chatWithDialogflow = httpsCallable<
+        { message: string; chatId: string; userId: string },
+        ChatResponse
+      >($functions as Functions, 'chatWithDialogflow')
+
+      const result = await chatWithDialogflow({
+        message: userMessage,
+        chatId, // Used as Dialogflow session ID for context continuity
+        userId: user.uid,
+      })
+
+      return result.data
+    } catch (error) {
+      console.error('Error getting bot response:', error)
+      // Return a fallback response on error
+      return {
+        message: "I'm sorry, I'm having trouble responding right now. Please try again.",
+        isCrisis: false,
+      }
+    }
+  }
+
   return {
     createChat,
     getUserChats,
@@ -239,5 +289,6 @@ export const useChat = () => {
     getChatMessages,
     subscribeToMessages,
     getTodayChat,
+    getBotResponse,
   }
 }

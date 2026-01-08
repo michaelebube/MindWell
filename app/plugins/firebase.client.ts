@@ -1,6 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+
+// Set to true to use emulators, false for production
+const USE_EMULATORS = false;
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
@@ -14,20 +18,27 @@ export default defineNuxtPlugin((nuxtApp) => {
     appId: config.public.firebaseAppId as string,
   };
 
-
   const app = initializeApp(firebaseConfig);
 
- 
   const auth = getAuth(app);
   const firestore = getFirestore(app);
+  const functions = getFunctions(app);
 
+  // Connect to local emulators only if enabled
+  if (USE_EMULATORS && import.meta.env.DEV) {
+    connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+    connectFirestoreEmulator(firestore, 'localhost', 8080);
+    connectFunctionsEmulator(functions, 'localhost', 5001);
+    console.log('Connected to Firebase emulators');
+  }
 
-   console.log('Firebase initialized');
+  console.log('Firebase initialized');
 
   return {
     provide: {
       auth,
       firestore,
+      functions,
     },
   };
 });

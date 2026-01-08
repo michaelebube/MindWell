@@ -35,7 +35,7 @@
     <div ref="messagesContainer" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 z-10">
       <!-- Welcome message if no messages -->
       <div
-        v-if="messages.length === 0 && !isLoading"
+        v-if="messages.length === 0 && !isLoading && !isBotTyping"
         class="flex flex-col items-center justify-center h-full text-center px-6"
       >
         <h2 class="text-lg xs:text-xl font-semibold text-[#80BA41]">Welcome, {{ userName }}</h2>
@@ -44,7 +44,7 @@
       </div>
 
       <!-- Messages -->
-      <template v-else>
+      <template v-if="messages.length > 0">
         <ChatBubble
           v-for="message in messages"
           :key="message.id"
@@ -56,7 +56,7 @@
       </template>
 
       <!-- Typing indicator -->
-      <TypingIndicator v-if="isBotTyping" />
+      <ChatTypingIndicator v-if="isBotTyping" />
     </div>
 
     <!-- Input -->
@@ -86,6 +86,7 @@ const {
   getChatMessages,
   subscribeToMessages,
   getTodayChat,
+  getBotResponse,
 } = useChat()
 
 // State
@@ -161,51 +162,16 @@ const handleSendMessage = async (content: string) => {
     // Show typing indicator
     isBotTyping.value = true
 
-    // Call your Cloud Function here to get AI response
-    // For now, we'll simulate with a timeout
-    // Replace this with actual Cloud Function call
-    const botResponse = await getBotResponse(content)
+    // Call Cloud Function to get AI response via Dialogflow
+    const botResponse = await getBotResponse(content, activeChatId.value)
 
-    // Save bot response
-    await saveBotMessage(activeChatId.value, botResponse.message, botResponse.isCrisis)
+    // Bot response is written by the server; rely on realtime listener to receive it
   } catch (error) {
     console.error('Error sending message:', error)
-    // Save error message
-    await saveBotMessage(
-      activeChatId.value,
-      "I'm sorry, I'm having trouble responding right now. Please try again.",
-      false
-    )
+    // Optionally show an inline error; do not write assistant messages from client to avoid duplicates
   } finally {
     isBotTyping.value = false
     scrollToBottom()
-  }
-}
-
-// Placeholder for Cloud Function call - replace with actual implementation
-const getBotResponse = async (
-  userMessage: string
-): Promise<{ message: string; isCrisis: boolean }> => {
-  // TODO: Replace with actual Cloud Function call
-  // const response = await $fetch('/api/chat', { method: 'POST', body: { message: userMessage, chatId: activeChatId.value } })
-
-  // Simulate delay
-  await new Promise(resolve => setTimeout(resolve, 1500))
-
-  // Simple placeholder response
-  const responses = [
-    'Thank you for sharing that with me. How does that make you feel?',
-    "I hear you. It sounds like you're going through a lot right now.",
-    "That's completely valid. Would you like to explore that feeling a bit more?",
-    'I appreciate you opening up. What do you think might help in this situation?',
-    "It takes courage to talk about these things. I'm here for you.",
-  ]
-
-  return {
-    message:
-      responses[Math.floor(Math.random() * responses.length)] ||
-      "I'm here to listen. Please share more.",
-    isCrisis: false,
   }
 }
 
