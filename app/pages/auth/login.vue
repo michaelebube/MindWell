@@ -4,7 +4,8 @@
       <!-- Password Reset Success Banner -->
       <div
         v-if="showResetSuccess"
-        class="bg-[#2E7D32] text-white xs:px-6 px-4 xs:py-4 py-3 rounded-lg xs:max-w-80 max-w-72 text-center mb-4 animate-bounce"
+        class="bg-[#2E7D32] text-white xs:px-6 px-4 xs:py-4 py-3 rounded-lg xs:max-w-80 sm:max-w-96 md:max-w-104 
+        xl:max-w-120 max-w-72 text-center mb-4 animate-bounce"
       >
         <p class="xs:text-[16px] text-sm font-semibold mb-1">✅ Password Reset Successful!</p>
         <p class="xs:text-sm text-xs opacity-90">You can now log in with your new password.</p>
@@ -12,7 +13,8 @@
 
       <!-- Green message card -->
       <div
-        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-2 px-3 xs:py-10 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2"
+        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-2 px-3 xs:py-10 py-5 rounded-lg xs:max-w-80 sm:max-w-96 md:max-w-104 
+        xl:max-w-120 max-w-72 text-center mb-8 flex flex-col gap-2"
       >
         <!-- Default State -->
         <template v-if="true">
@@ -26,7 +28,8 @@
 
       <!-- Form container -->
       <div
-        class="flex flex-col gap-3 w-full xs:max-w-80 max-w-72 space-y-3 rounded-xl px-6 pt-4 pb-7 mb-10 xs:mb-0 relative overflow-hidden transition-all duration-300 bg-[#2558A6]"
+        class="flex flex-col gap-3 w-full xs:max-w-80 sm:max-w-96 md:max-w-104 
+        xl:max-w-120 max-w-72 space-y-3 rounded-xl px-6 pt-4 pb-7 mb-10 xs:mb-0 sm:mb-24 relative overflow-hidden transition-all duration-300 bg-[#2558A6]"
         :class="{ 'pt-12': loginState === 'success' || loginState === 'error' }"
       >
         <div

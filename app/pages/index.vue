@@ -9,12 +9,20 @@
       ></div>
 
       <!-- Logo -->
+
       <img
-        class="xs:mt-6 mt-5 mx-auto xs:w-25 xs:h-25 w-20 h-20 relative z-10 sm:mt-3"
+        class="xs:mt-6 mt-5 mx-auto xs:w-25 xs:h-25 w-20 h-20 relative z-10 sm:mt-3 xl:ml-3"
         :src="logo"
         alt="MindWell Logo"
       />
-      <!-- <img :src="greenBlob" alt="" /> -->
+
+      <img class="absolute hidden xl:block xl:-top-12 xl:-right-2" :src="topSVG" alt="" />
+
+      <img
+        class="hidden sm:block w-150 h-150 opacity-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        :src="logo"
+        alt=""
+      />
 
       <!-- Chat bubbles section -->
       <div
@@ -59,7 +67,7 @@
 
             <NuxtLink
               to="/register"
-              class="bg-white text-[#80BA41] xs:px-4 px-5 xs:py-2 py-1.5 sm:px-9 sm:py-2 rounded-xl xs:text-sm text-xs sm:text-sm xl:text-xl font-semibold text-center hover:bg-gray-50 transition-colors mb-2 shadow-lg"
+              class="bg-white text-[#80BA41] xs:px-4 px-5 xs:py-2 py-1.5 sm:px-8 xl:px-6.5 sm:py-2 rounded-xl xs:text-sm text-xs sm:text-sm xl:text-xl font-semibold text-center hover:bg-gray-50 transition-colors mb-2 shadow-lg"
             >
               Let's get started
             </NuxtLink>
@@ -76,7 +84,7 @@
             </p>
             <NuxtLink
               to="/login"
-              class="text-[#80BA41] font-semibold sm:block sm:text-center text-xs lg:text-[16px] mt-1.5 sm:mt-1 xl:text-xl"
+              class="text-[#80BA41] font-semibold sm:block sm:text-center text-xs sm:text-sm lg:text-[16px] mt-1.5 sm:mt-1 xl:text-xl"
             >
               Sign-in
             </NuxtLink>
@@ -94,7 +102,7 @@ import wave from '../assets/svg/wave.svg'
 import bgImg from '../assets/images/bgImage.png'
 import huggingIcon from '../assets/svg/noto_people-hugging.svg'
 import waveLg from '../assets/svg/wave-big.svg'
-import GreenBlob from '../assets/svg/green-blob.svg'
+import topSVG from '../assets/svg/green-blob.svg'
 
 console.log($auth, $firestore)
 
