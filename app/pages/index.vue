@@ -10,7 +10,7 @@
 
       <!-- Logo -->
       <img
-        class="xs:mt-6 mt-5 mx-auto xs:w-25 xs:h-25 w-20 h-20 relative z-10 sm:ml-4 sm:mt-3"
+        class="xs:mt-6 mt-5 mx-auto xs:w-25 xs:h-25 w-20 h-20 relative z-10 sm:mt-3"
         :src="logo"
         alt="MindWell Logo"
       />
@@ -35,7 +35,7 @@
       </div>
 
       <!-- Bottom wave section with content -->
-      <div class="relative mt-auto">
+      <div class="relative">
         <!-- Wave image -->
         <img :src="wave" alt="wave" class="absolute bottom-0 left-0 w-full h-auto sm:hidden" />
         <img
@@ -45,27 +45,42 @@
         />
 
         <!-- Content on top of wave -->
-        <div class="relative z-10 flex flex-col items-center justify-center xs:pb-13 pb-8">
-          <h1
-            class="text-white xs:text-[16px] text-[14px] font-semibold mb-4 flex items-center gap-2"
-          >
-            We are here to help
-            <span class="text-[16px] xs:text-[14px]"
-              ><img :src="huggingIcon" alt="Hugging Icon"
-            /></span>
-          </h1>
+        <div
+          class="relative z-10 flex flex-col items-center justify-center xs:pb-6 pb-8 sm:flex-row sm:items-center sm:justify-between sm:px-20 sm:pb-6 sm:py-8 md:px-32 lg:px-44 xl:px-60"
+        >
+          <!-- Left: heading + button -->
+          <div class="flex flex-col sm:items-start items-center">
+            <h1
+              class="text-white xs:text-[16px] text-[14px] lg:text-lg xl:text-xl font-light mb-5 sm:mb-2 flex items-center gap-2"
+            >
+              We are here to help
+              <span><img :src="huggingIcon" alt="Hugging Icon" /></span>
+            </h1>
 
-          <NuxtLink
-            to="/register"
-            class="bg-white text-[#80BA41] xs:px-6 px-5 xs:py-2 py-1.5 rounded-xl xs:text-sm text-xs font-semibold text-center hover:bg-gray-50 transition-colors mb-2 shadow-lg"
-          >
-            Let's get started
-          </NuxtLink>
+            <NuxtLink
+              to="/register"
+              class="bg-white text-[#80BA41] xs:px-4 px-5 xs:py-2 py-1.5 sm:px-9 sm:py-2 rounded-xl xs:text-sm text-xs sm:text-sm xl:text-xl font-semibold text-center hover:bg-gray-50 transition-colors mb-2 shadow-lg"
+            >
+              Let's get started
+            </NuxtLink>
+          </div>
 
-          <p class="text-white xs:text-sm text-xs">
-            Have an account?
-            <NuxtLink to="/login" class="text-[#80BA41] font-semibold ml-1"> Sign-in </NuxtLink>
-          </p>
+          <div class="hidden sm:block sm:border sm:border-white h-24"></div>
+
+          <!-- Right: sign-in -->
+          <div class="flex flex-col items-center">
+            <p
+              class="text-white font-light xs:text-sm text-xs sm:text-[16px] md:text-lg xl:text-xl"
+            >
+              Have an account?
+            </p>
+            <NuxtLink
+              to="/login"
+              class="text-[#80BA41] font-semibold sm:block sm:text-center text-xs lg:text-[16px] mt-1.5 sm:mt-1 xl:text-xl"
+            >
+              Sign-in
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </div>
