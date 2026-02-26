@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @theme {
@@ -25,4 +25,13 @@ body {
 
 .animate-slideDown {
   animation: slideDown 0.3s ease-out;
+}
+
+/* Vertically center content only on tall tablet screens (iPads) */
+/* min-width:768px excludes phones, min-height:1000px excludes laptops */
+@media (min-width: 768px) and (min-height: 1000px) {
+  .tablet-v-center {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
 }

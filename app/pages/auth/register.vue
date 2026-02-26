@@ -1,10 +1,9 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex flex-col flex-1">
     <div class="flex-1 flex flex-col items-center justify-center px-6">
       <!-- Green message card -->
       <div
-        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-12 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104
-        xl:max-w-120  text-center mb-8 flex flex-col gap-2"
+        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-12 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 xl:max-w-120 text-center mb-8 flex flex-col gap-2"
       >
         <!-- Default State -->
         <template v-if="registrationState === 'idle'">
@@ -43,8 +42,7 @@
 
       <!-- Form container -->
       <div
-        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 
-        xl:max-w-120 space-y-3 rounded-xl px-6 py-8 mb-10 xs:mb-0 sm:mb-36"
+        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 xl:max-w-120 space-y-3 rounded-xl px-6 py-8 mb-10 xs:mb-0 sm:mb-36"
       >
         <!-- Success Message -->
         <div v-if="registrationState === 'success'" class="text-center text-white py-14">
@@ -65,7 +63,7 @@
         </div>
 
         <!-- Form -->
-        <form v-else class="flex flex-col gap-3 space-y-3  " @submit.prevent="handleRegister">
+        <form v-else class="flex flex-col gap-3 space-y-3" @submit.prevent="handleRegister">
           <div class="flex flex-col gap-1.5">
             <label class="text-[#FBFBFB] opacity-60 xs:text-sm font-extralight text-xs" for="name"
               >Anonymous Name</label

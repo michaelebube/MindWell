@@ -19,26 +19,26 @@
       <img class="absolute hidden xl:block xl:-top-12 xl:-right-2" :src="topSVG" alt="" />
 
       <img
-        class="hidden sm:block w-150 h-150 opacity-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        class="hidden sm:block w-150 h-150 opacity-5 absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2"
         :src="logo"
         alt=""
       />
 
       <!-- Chat bubbles section -->
-      <div
-        class="flex-1 xs:pt-10 pt-5 xs:space-y-7 sm:pt-2 space-y-5 relative z-10 overflow-y-auto"
-      >
-        <div
-          v-for="(statement, index) in displayedStatements"
-          :key="index"
-          class="bg-[#80BA41] text-white xs:px-6 px-4 xs:py-3 sm:py-4 py-2 lg:py-4 rounded xs:max-w-64 max-w-56 sm:max-w-110 lg:max-w-140 xl:w-400 xs:text-sm text-xs sm:text-[15px] lg:text-lg xs:leading-5 leading-4 font-medium"
-          :class="
-            index % 2 === 0
-              ? 'rounded-tr-[40px] rounded-br-xl'
-              : 'rounded-tl-[40px] rounded-bl-xl ml-auto'
-          "
-        >
-          {{ statement }}
+      <div class="flex-1 min-h-0 flex flex-col relative z-10 overflow-y-auto">
+        <div class="tablet-v-center xs:pt-10 pt-5 xs:space-y-7 sm:pt-2 space-y-5">
+          <div
+            v-for="(statement, index) in displayedStatements"
+            :key="index"
+            class="bg-[#80BA41] text-white xs:px-6 px-4 xs:py-3 sm:py-4 py-2 lg:py-4 xs:max-w-64 max-w-56 sm:max-w-110 lg:max-w-140 xl:max-w-[720px] xl:text-center xs:text-sm text-xs sm:text-[15px] lg:text-lg xs:leading-5 leading-4 font-medium"
+            :class="
+              index % 2 === 0
+                ? 'rounded-tr-[40px] rounded-br-xl'
+                : 'rounded-tl-[40px] rounded-bl-xl ml-auto'
+            "
+          >
+            {{ statement }}
+          </div>
         </div>
       </div>
 
@@ -117,6 +117,9 @@ onMounted(() => {
   // Check screen size
   const checkScreenSize = () => {
     isSmallScreen.value = window.innerWidth <= 344 && window.innerHeight <= 600
+    // Minimized laptop: wider than phones but shorter than tablets, just below sm (640px)
+    isMiniLaptop.value =
+      window.innerWidth >= 480 && window.innerWidth < 640 && window.innerHeight < 750
   }
 
   checkScreenSize()
@@ -136,8 +139,10 @@ const introductoryStatements = [
 ]
 // Computed to show 3 messages on small screens, 5 on others
 const isSmallScreen = ref(false)
+const isMiniLaptop = ref(false)
 
 const displayedStatements = computed(() => {
+  if (isMiniLaptop.value) return introductoryStatements.slice(0, 3)
   return isSmallScreen.value ? introductoryStatements.slice(0, 4) : introductoryStatements
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex flex-col flex-1">
     <div class="flex-1 flex flex-col items-center justify-center px-6">
       <!-- Green message card -->
       <div
