@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col flex-1">
-    <div class="flex-1 flex flex-col items-center justify-center px-6">
+    <div class="sm:flex-1 flex flex-col items-center justify-center px-6">
       <!-- Green message card -->
       <div
-        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-12 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 text-center mb-8 flex flex-col gap-2"
+        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-12 xs:py-6 py-5 md:py-8 lg:py-12 rounded-lg xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 lg:max-w-lg xl:max-w-136 text-center mb-8 flex flex-col gap-2"
       >
         <!-- Default State -->
-        <template v-if="resetState === 'idle'">
+        <template v-if="resetState !== 'success'">
           <p class="xs:text-[16px] text-sm xs:leading-5 leading-5 mb-4">Forgot your password?</p>
           <img :src="DownArrowIcon" alt="Down Arrow" width="16" height="16" class="mx-auto mb-4" />
           <p class="xs:text-[16px] text-sm xs:leading-5 leading-4">
@@ -31,11 +31,17 @@
 
       <!-- Form container -->
       <div
-        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 space-y-3 rounded-xl px-6 py-8 mb-10 xs:mb-0 relative"
+        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 lg:max-w-lg xl:max-w-136 space-y-3 rounded-xl px-6 py-8 md:py-10 lg:py-12 mb-10 xs:mb-0 sm:mb-24 relative"
       >
+        <!-- Success grey overlay -->
         <div
           v-if="resetState === 'success'"
-          class="absolute top-0 left-0 right-0 bg-[#2E7D32] text-white text-center rounded-t-lg py-2 xs:text-sm text-xs font-semibold animate-slideDown"
+          class="absolute inset-0 bg-gray-400/80 rounded-xl z-10 cursor-not-allowed h-full"
+        />
+
+        <div
+          v-if="resetState === 'success'"
+          class="absolute top-0 left-0 right-0 bg-[#2E7D32] text-white text-center rounded-t-lg py-2 xs:text-sm text-xs font-semibold animate-slideDown z-20"
         >
           Submitted!
         </div>
@@ -50,7 +56,6 @@
 
         <!-- Form -->
         <form
-          v-else
           class="flex flex-col gap-3 space-y-3"
           :class="{ 'mt-6': resetState !== 'idle' }"
           @submit.prevent="handlePasswordReset"
@@ -130,8 +135,11 @@ const handlePasswordReset = async () => {
       handleCodeInApp: false,
     })
 
-    console.log('Password reset email sent to:', email.value)
     resetState.value = 'success'
+    email.value = ''
+    setTimeout(() => {
+      resetState.value = 'idle'
+    }, 5000)
   } catch (err: any) {
     console.error('Password reset error:', err)
 
@@ -142,6 +150,10 @@ const handlePasswordReset = async () => {
       case 'auth/user-not-found':
         // For security, show success anyway
         resetState.value = 'success'
+        setTimeout(() => {
+          resetState.value = 'idle'
+          loading.value = false
+        }, 5000)
         return
       case 'auth/too-many-requests':
         errorMessage.value = 'Too many requests. Please try again later.'

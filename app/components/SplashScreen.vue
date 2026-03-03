@@ -13,7 +13,7 @@
     ></div>
 
     <div class="absolute inset-0 flex flex-col justify-center items-center z-10">
-      <img :src="logo" alt="MindWell Logo" />
+      <img :src="logo" alt="MindWell Logo" class="md:w-75 md:h-75 lg:h-105 lg:w-105" />
     </div>
 
     <div class="absolute sm:hidden -bottom-1 object-cover w-[105%] z-10">

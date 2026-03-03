@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col flex-1">
-    <div class="flex flex-1 flex-col items-center justify-center px-6">
+    <div class="flex sm:flex-1 flex-col items-center justify-center px-6">
       <!-- Password Reset Success Banner -->
       <div
         v-if="showResetSuccess"

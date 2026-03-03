@@ -1,9 +1,10 @@
 <template>
   <div class="flex flex-col flex-1">
-    <div class="flex-1 flex flex-col items-center justify-center px-6">
+    <div class="sm:flex-1 flex flex-col items-center justify-center px-6">
       <!-- Green message card -->
       <div
-        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 px-12 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 xl:max-w-120 text-center mb-8 flex flex-col gap-2"
+        class="bg-[#80BA41] mt-4 text-[#FBFBFB]/90 xs:px-18 lg:py-10 xl:px-6 px-12 xs:py-6 py-5 rounded-lg xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 lg:max-w-md xl:max-w-120 text-center mb-8 flex flex-col gap-2"
+        :class="{ 'sm:hidden': registrationState === 'success' || registrationState === 'error' }"
       >
         <!-- Default State -->
         <template v-if="registrationState === 'idle'">
@@ -42,24 +43,50 @@
 
       <!-- Form container -->
       <div
-        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 xl:max-w-120 space-y-3 rounded-xl px-6 py-8 mb-10 xs:mb-0 sm:mb-36"
+        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 lg:max-w-md xl:max-w-120 space-y-3 rounded-xl px-6 py-8 lg:py-12 xl:py-8 mb-10 xs:mb-0 sm:mb-36"
       >
         <!-- Success Message -->
-        <div v-if="registrationState === 'success'" class="text-center text-white py-14">
-          <p class="xs:text-2xl text-lg font-bold">Account Created</p>
+        <div v-if="registrationState === 'success'" class="text-center text-white py-14 sm:py-10">
+          <p class="xs:text-2xl text-lg font-bold">Account <span class="block">Created</span></p>
           <img :src="greenTick" alt="Green Tick" class="mx-auto mt-2 xs:w-14 xs:h-14" />
+
+          <!-- Combined content for sm+ screens -->
+          <div class="hidden sm:block">
+            <hr class="border-white/ border-2 my-16 mx-auto rounded-lg w-full" />
+            <p class="text-base sm:text-[16px] leading-1 tracking-wide text-[#FBFBFB] font-normal">
+              Yayy!!! Welcome to MindWell,
+              <span class="font-semibold">{{ formData.name }} .</span>
+            </p>
+            <p class="mt-2 text-[#FBFBFB] text-base sm:text-[16px] font-normal tracking-wide">
+              You're going to love it here.
+            </p>
+            <img :src="greenHeartIcon" alt="" class="mx-auto mt-6 w-8 h-8" />
+          </div>
         </div>
 
         <!-- Error Message -->
         <div
           v-else-if="registrationState === 'error'"
-          class="text-center text-white py-16 flex flex-col gap-1"
+          class="text-center text-white py-16 sm:py-10 flex flex-col gap-1"
         >
-          <p class="xs:text-xl text-lg font-bold xs:leading-6 leading-5">Error</p>
-          <img :src="errorIcon" alt="Error Icon" class="mx-auto mt-2 xs:w-14 xs:h-14" />
-          <p class="xs:text-lg text-[16px]mt-2 xs:leading-6 leading-5 font-medium">
+          <p class="xs:text-xl text-lg font-bold xs:leading-6 sm:text-2xl leading-5">Error</p>
+          <img
+            :src="errorIcon"
+            alt="Error Icon"
+            class="mx-auto mt-2 xs:w-14 xs:h-14 sm:h-18 sm:w-18"
+          />
+          <p class="sm:hidden xs:text-lg text-[16px] mt-2 xs:leading-6 leading-5 font-medium">
             Please try again
           </p>
+
+          <!-- Combined content for sm+ screens -->
+          <div class="hidden sm:block">
+            <hr class="border-white/ border-2 my-16 mx-auto rounded-lg w-full" />
+            <p class="text-base sm:text-[16px] leading-6 tracking-wide text-[#FBFBFB] font-normal">
+              It's okay — don't feel bad. Let's try again together.
+            </p>
+            <img :src="huggingIcon" alt="Hugging Icon" class="mx-auto mt-6 w-10 h-10" />
+          </div>
         </div>
 
         <!-- Form -->
@@ -134,6 +161,7 @@ import greenTick from '../../assets/svg/green_tick.svg'
 import huggingIcon from '../../assets/svg/noto_people-hugging.svg'
 import errorIcon from '../../assets/svg/error.svg'
 import blueHeartIcon from '../../assets/svg/blue-heart.svg'
+import greenHeartIcon from '../../assets/svg/greenheart.svg'
 
 definePageMeta({
   layout: 'auth',

@@ -11,12 +11,16 @@
       <!-- Logo -->
 
       <img
-        class="xs:mt-6 mt-5 mx-auto xs:w-25 xs:h-25 w-20 h-20 relative z-10 sm:mt-3 xl:ml-3"
+        class="xs:mt-6 mt-5 mx-auto xs:w-25 xs:h-25 w-20 h-20 relative z-10 sm:mt-3 md:ml-3 xl:ml-3"
         :src="logo"
         alt="MindWell Logo"
       />
 
-      <img class="absolute hidden xl:block xl:-top-12 xl:-right-2" :src="topSVG" alt="" />
+      <img
+        class="absolute hidden md:block md:-top-6 md:-right-1 xl:-top-12 xl:-right-2"
+        :src="topSVG"
+        alt=""
+      />
 
       <img
         class="hidden sm:block w-150 h-150 opacity-5 absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -106,7 +110,7 @@ import topSVG from '../assets/svg/green-blob.svg'
 
 console.log($auth, $firestore)
 
-const showSplash = ref(false)
+const showSplash = ref(true)
 
 onMounted(() => {
   // Set timeout to hide splash screen after 3 seconds
