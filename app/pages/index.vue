@@ -34,7 +34,7 @@
           <div
             v-for="(statement, index) in displayedStatements"
             :key="index"
-            class="bg-[#80BA41] text-white xs:px-6 px-4 xs:py-3 sm:py-4 py-2 lg:py-4 xs:max-w-64 max-w-56 sm:max-w-110 lg:max-w-140 xl:max-w-[720px] xl:text-center xs:text-sm text-xs sm:text-[15px] lg:text-lg xs:leading-5 leading-4 font-medium"
+            class="bg-[#80BA41] text-white xs:px-6 px-4 xs:py-3 sm:py-4 py-2 lg:py-4 xs:max-w-64 max-w-56 sm:max-w-110 lg:max-w-140 xl:max-w-180 xl:text-center xs:text-sm text-xs sm:text-[15px] lg:text-lg xs:leading-5 leading-4 font-medium"
             :class="
               index % 2 === 0
                 ? 'rounded-tr-[40px] rounded-br-xl'
