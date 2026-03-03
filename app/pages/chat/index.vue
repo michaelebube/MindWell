@@ -6,7 +6,11 @@
     ></div>
 
     <!-- Header -->
-    <ChatHeader class="z-10" @toggle-sidebar="sidebarOpen = true" @sos-click="navigateTo('/sos')" />
+    <ChatHeader
+      class="z-10 sm:px-4 lg:px-6"
+      @toggle-sidebar="sidebarOpen = true"
+      @sos-click="navigateTo('/sos')"
+    />
 
     <!-- Sidebar -->
     <ChatSidebar
@@ -38,9 +42,15 @@
         v-if="messages.length === 0 && !isLoading && !isBotTyping"
         class="flex flex-col items-center justify-center h-full text-center px-6"
       >
-        <h2 class="text-lg xs:text-xl font-semibold text-[#80BA41]">Welcome, {{ userName }}</h2>
+        <h2 class="text-lg xs:text-xl sm:text-2xl lg:text-3xl font-semibold text-[#80BA41]">
+          Welcome, {{ userName }}
+        </h2>
 
-        <img :src="logo" alt="MindWell Logo" class="opacity-35 w-50 h-50 -mt-5" />
+        <img
+          :src="logo"
+          alt="MindWell Logo"
+          class="opacity-35 w-50 h-50 sm:w-55 sm lg:w-70 lg:h-70 -mt-5"
+        />
       </div>
 
       <!-- Messages -->
@@ -52,6 +62,7 @@
           :is-user="message.role === 'user'"
           :timestamp="message.timestamp?.toDate ? message.timestamp.toDate() : new Date()"
           :is-crisis="message.isCrisis"
+          class="sm:px-4 lg:px-6"
         />
       </template>
 
@@ -60,7 +71,23 @@
     </div>
 
     <!-- Input -->
-    <ChatInput class="z-10" :disabled="isBotTyping || isLoading" @send="handleSendMessage" />
+    <ChatInput
+      class="z-10 sm:mb-12 lg:mb-18 sm:px-8 lg:px-9.5"
+      :disabled="isBotTyping || isLoading"
+      @send="handleSendMessage"
+    />
+
+    <img
+      class="absolute bottom-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
+      :src="bottomBlueBlob"
+      alt=""
+    />
+
+    <img
+      class="absolute bottom-0 right-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
+      :src="rightSideBlue"
+      alt=""
+    />
   </div>
 </template>
 
@@ -69,6 +96,8 @@ import { signOut } from 'firebase/auth'
 import type { Message, Chat } from '~/composables/useChat'
 import bgImg from '../../assets/images/bgImage.png'
 import logo from '../../assets/svg/logo.svg'
+import bottomBlueBlob from '../../assets/svg/bottomBlueSVG.svg'
+import rightSideBlue from '../../assets/svg/rightSideBlue.svg'
 import type LogoutModalVue from '~/components/chat/LogoutModal.vue'
 
 definePageMeta({
