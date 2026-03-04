@@ -355,24 +355,24 @@ const handleLogout = async () => {
 </script>
 
 <style scoped>
-/* Default waves: fade out immediately, fade in after sidebar wave leaves */
+/* Default waves: fade out quickly, fade in after sidebar wave fully leaves */
 .wave-default-enter-active {
-  transition: opacity 0.2s ease 0.3s; /* 0.3s delay so sidebar wave leaves first */
+  transition: opacity 0.25s ease 0.35s; /* delayed until sidebar wave is gone */
 }
 .wave-default-leave-active {
-  transition: opacity 0.2s ease; /* no delay, disappear first */
+  transition: opacity 0.15s ease; /* disappear fast */
 }
 .wave-default-enter-from,
 .wave-default-leave-to {
   opacity: 0;
 }
 
-/* Sidebar wave: slide in after default waves disappear, slide out immediately */
+/* Sidebar wave: slide in after default waves gone, slide out first on close */
 .slide-right-enter-active {
-  transition: transform 0.3s ease 0.3s; /* 0.3s delay so default waves fade out first */
+  transition: transform 0.3s ease 0.2s; /* wait for default waves to fade */
 }
 .slide-right-leave-active {
-  transition: transform 0.3s ease; /* no delay, leave first */
+  transition: transform 0.25s ease; /* leave promptly */
 }
 .slide-right-enter-from,
 .slide-right-leave-to {
