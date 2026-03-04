@@ -6,7 +6,7 @@
       aria-label="Toggle sidebar"
       @click="$emit('toggleSidebar')"
     >
-      <img :src="hamburgerIcon" alt="Hamburger  Menu" class="pt-1.25 lg:w-28" />
+      <img :src="hamburgerIcon" alt="Hamburger  Menu" class="pt-1.25 lg:w-24" />
     </button>
 
     <!-- SOS Button -->

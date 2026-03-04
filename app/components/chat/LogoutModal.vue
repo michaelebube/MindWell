@@ -13,19 +13,19 @@
 
         <!-- Message -->
         <p class="xs:text-lg text-[14px] text-gray-600 mb-6">
-          Are you sure about this, {{ userName }}
+          Are you sure about this, {{ userName }} ?
         </p>
 
         <!-- Buttons -->
         <div class="flex gap-3">
           <button
-            class="flex-1 py-2.5 px-4 rounded-xl bg-[#80BA41] border border-[#80BA41] font-medium hover:bg-gray-50 transition-colors text-white"
+            class="flex-1 py-2.5 px-4 rounded-xl bg-[#80BA41] border border-[#80BA41] font-medium hover:bg-gray-50 hover:text-[#80BA41] transition-colors text-white"
             @click="$emit('close')"
           >
             No
           </button>
           <button
-            class="flex-1 py-2.5 px-4 rounded-xl border border-[#DD0025] text-[#DD0025] font-medium hover:bg-red-700 transition-colors"
+            class="flex-1 py-2.5 px-4 rounded-xl border border-[#DD0025] text-[#DD0025] font-medium hover:bg-red-700 hover:text-white transition-colors"
             @click="$emit('confirm')"
           >
             Yes

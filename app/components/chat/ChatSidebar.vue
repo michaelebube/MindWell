@@ -8,7 +8,7 @@
   <Transition name="slide">
     <aside
       v-if="isOpen"
-      class="fixed top-0 left-0 h-full w-56 xs:w-80 bg-white z-50 rounded-tr-[50px] rounded-br-[50px] flex flex-col shadow-xl"
+      class="fixed top-0 left-0 h-full w-56 xs:w-80 lg:w-90 bg-white z-50 rounded-tr-[50px] rounded-br-[50px] flex flex-col shadow-xl"
     >
       <!-- Search Bar -->
       <div class="xs:px-5 px-4 xs:pt-12 pt-10 pb-4">
@@ -70,32 +70,74 @@
             :key="chat.id"
             class="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-b-0"
           >
+            <!-- Editing mode -->
+            <input
+              v-if="editingChatId === chat.id"
+              ref="renameInputRef"
+              v-model="editingTitle"
+              type="text"
+              class="flex-1 text-sm text-gray-800 border border-[#80BA41] rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#80BA41]"
+              @keyup.enter="confirmRename(chat.id)"
+              @keyup.escape="cancelRename"
+              @blur="confirmRename(chat.id)"
+            />
+
+            <!-- Display mode -->
             <button
+              v-else
               class="flex-1 text-left text-sm text-gray-800 truncate hover:text-[#80BA41] transition-colors"
               :class="{ 'text-[#80BA41] font-medium': chat.id === activeChatId }"
               @click="$emit('selectChat', chat.id)"
+              @dblclick.stop="startRename(chat)"
             >
               {{ chat.title || 'New Chat' }}
             </button>
-            <button
-              class="ml-2 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-              @click.stop="$emit('deleteChat', chat.id)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
+
+            <div class="flex items-center">
+              <!-- Rename button -->
+              <button
+                v-if="editingChatId !== chat.id"
+                class="ml-1 p-1.5 text-gray-400 hover:text-[#80BA41] hover:bg-green-50 rounded transition-colors"
+                title="Rename chat"
+                @click.stop="startRename(chat)"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
+              </button>
+
+              <!-- Delete button -->
+              <button
+                class="ml-1 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                @click.stop="$emit('deleteChat', chat.id)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -170,17 +212,46 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), { activeChatId: '' })
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'close'): void
   (e: 'newChat'): void
   (e: 'selectChat', chatId: string): void
   (e: 'deleteChat', chatId: string): void
+  (e: 'renameChat', chatId: string, newTitle: string): void
   (e: 'goToProfile'): void
   (e: 'goToMoodMeter'): void
   (e: 'goToLogoutModal'): void
 }>()
 
 const searchQuery = ref('')
+const editingChatId = ref<string | null>(null)
+const editingTitle = ref('')
+const renameInputRef = ref<HTMLInputElement[] | null>(null)
+
+const startRename = (chat: Chat) => {
+  editingChatId.value = chat.id
+  editingTitle.value = chat.title || ''
+  nextTick(() => {
+    if (renameInputRef.value && renameInputRef.value.length > 0) {
+      renameInputRef.value[0]?.focus()
+      renameInputRef.value[0]?.select()
+    }
+  })
+}
+
+const confirmRename = (chatId: string) => {
+  const trimmed = editingTitle.value.trim()
+  if (trimmed && editingChatId.value === chatId) {
+    emit('renameChat', chatId, trimmed)
+  }
+  editingChatId.value = null
+  editingTitle.value = ''
+}
+
+const cancelRename = () => {
+  editingChatId.value = null
+  editingTitle.value = ''
+}
 
 const filteredChats = computed(() => {
   if (!searchQuery.value.trim()) {

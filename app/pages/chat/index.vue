@@ -23,6 +23,7 @@
       @new-chat="handleNewChat"
       @select-chat="handleSelectChat"
       @delete-chat="handleDeleteChat"
+      @rename-chat="handleRenameChat"
       @go-to-profile="navigateTo('/profile')"
       @go-to-mood-meter="navigateTo('/mood-meter')"
       @go-to-logout-modal="logoutModalOpen = true"
@@ -116,6 +117,7 @@ const {
   subscribeToMessages,
   getTodayChat,
   getBotResponse,
+  renameChat,
 } = useChat()
 
 // State
@@ -273,6 +275,20 @@ const handleSelectChat = async (chatId: string) => {
 const handleDeleteChat = async (chatId: string) => {
   // TODO: Implement delete chat logic
   console.log('Delete chat:', chatId)
+}
+
+// Handle rename chat
+const handleRenameChat = async (chatId: string, newTitle: string) => {
+  try {
+    await renameChat(chatId, newTitle)
+    // Update local chat list
+    const chat = chats.value.find(c => c.id === chatId)
+    if (chat) {
+      chat.title = newTitle
+    }
+  } catch (error) {
+    console.error('Error renaming chat:', error)
+  }
 }
 
 // Handle logout
