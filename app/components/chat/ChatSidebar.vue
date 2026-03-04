@@ -145,7 +145,7 @@
 
     <!-- User Profile -->
     <div class="xs:px-5 px-4 py-4 xs:pb-7.5 pb-5">
-      <button class="w-full flex items-center gap-3" @click="$emit('goToProfile')">
+      <button class="w-full flex items-center gap-3 cursor-pointer" @click="$emit('goToProfile')">
         <img :src="profileIcon" alt="" />
         <div class="flex-1 min-w-0 text-left">
           <p class="text-sm font-medium text-[#80BA41] truncate">{{ userName }}</p>
@@ -156,7 +156,7 @@
 
     <!-- User Profile -->
     <div class="xs:px-5 px-4 xs:pb-7.5 pb-5">
-      <button class="w-full flex items-center gap-3" @click="$emit('goToMoodMeter')">
+      <button class="w-full flex items-center gap-3 cursor-pointer" @click="$emit('goToMoodMeter')">
         <img :src="moodMeterIcon" alt="" />
         <div class="flex-1 min-w-0 text-left">
           <p class="text-sm font-medium text-[#80BA41] truncate">Mood Meter</p>
@@ -167,7 +167,7 @@
 
     <!-- User Profile -->
     <div class="xs:px-5 px-4 xs:pb-7.5 pb-6">
-      <button class="w-full flex items-center gap-3" @click="$emit('goToLogoutModal')">
+      <button class="w-full flex items-center gap-3 cursor-pointer" @click="$emit('goToLogoutModal')">
         <img :src="logOutIcon" alt="" />
         <div class="flex-1 min-w-0 text-left">
           <p class="text-sm font-medium text-[#DD0025] truncate">Log out</p>
