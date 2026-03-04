@@ -78,17 +78,31 @@
       @send="handleSendMessage"
     />
 
-    <img
-      class="absolute bottom-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
-      :src="bottomBlueBlob"
-      alt=""
-    />
+    <Transition name="wave-default">
+      <img
+        v-if="!sidebarOpen"
+        class="absolute bottom-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
+        :src="bottomBlueBlob"
+        alt=""
+      />
+    </Transition>
 
-    <img
-      class="absolute bottom-0 right-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
-      :src="rightSideBlue"
-      alt=""
-    />
+    <Transition name="wave-default">
+      <img
+        v-if="!sidebarOpen"
+        class="absolute bottom-0 right-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
+        :src="rightSideBlue"
+        alt=""
+      />
+    </Transition>
+
+    <Transition name="slide-right">
+      <img
+        v-if="sidebarOpen"
+        class="absolute bottom-0 right-0 hidden sm:block sm:w-1/2 md:w-3/5 xl:w-2/3 sm:h-14 md:h-16 lg:h-20"
+        :src="sideBarBottomWave"
+      />
+    </Transition>
   </div>
 </template>
 
@@ -99,6 +113,7 @@ import bgImg from '../../assets/images/bgImage.png'
 import logo from '../../assets/svg/logo.svg'
 import bottomBlueBlob from '../../assets/svg/bottomBlueSVG.svg'
 import rightSideBlue from '../../assets/svg/rightSideBlue.svg'
+import sideBarBottomWave from '../../assets/svg/Sidebar-Blue-Wave.svg'
 import type LogoutModalVue from '~/components/chat/LogoutModal.vue'
 
 definePageMeta({
@@ -118,6 +133,7 @@ const {
   getTodayChat,
   getBotResponse,
   renameChat,
+  softDeleteChat,
 } = useChat()
 
 // State
@@ -271,10 +287,44 @@ const handleSelectChat = async (chatId: string) => {
   }
 }
 
-// Handle delete chat
+// Handle delete chat (soft-delete)
 const handleDeleteChat = async (chatId: string) => {
-  // TODO: Implement delete chat logic
-  console.log('Delete chat:', chatId)
+  try {
+    await softDeleteChat(chatId)
+
+    // Remove from local list
+    chats.value = chats.value.filter(c => c.id !== chatId)
+
+    // If we deleted the active chat, switch to another or create new
+    if (chatId === activeChatId.value) {
+      if (unsubscribeMessages) {
+        unsubscribeMessages()
+      }
+
+      if (chats.value.length > 0) {
+        // Switch to the first available chat
+        const nextChat = chats.value[0]!
+        activeChatId.value = nextChat.id
+        messages.value = await getChatMessages(nextChat.id)
+        unsubscribeMessages = subscribeToMessages(nextChat.id, newMessages => {
+          messages.value = newMessages
+          scrollToBottom()
+        })
+      } else {
+        // No chats left, create a new one
+        const newChatId = await createChat()
+        activeChatId.value = newChatId
+        messages.value = []
+        chats.value = await getUserChats()
+        unsubscribeMessages = subscribeToMessages(newChatId, newMessages => {
+          messages.value = newMessages
+          scrollToBottom()
+        })
+      }
+    }
+  } catch (error) {
+    console.error('Error deleting chat:', error)
+  }
 }
 
 // Handle rename chat
@@ -303,3 +353,29 @@ const handleLogout = async () => {
   }
 }
 </script>
+
+<style scoped>
+/* Default waves: fade out immediately, fade in after sidebar wave leaves */
+.wave-default-enter-active {
+  transition: opacity 0.2s ease 0.3s; /* 0.3s delay so sidebar wave leaves first */
+}
+.wave-default-leave-active {
+  transition: opacity 0.2s ease; /* no delay, disappear first */
+}
+.wave-default-enter-from,
+.wave-default-leave-to {
+  opacity: 0;
+}
+
+/* Sidebar wave: slide in after default waves disappear, slide out immediately */
+.slide-right-enter-active {
+  transition: transform 0.3s ease 0.3s; /* 0.3s delay so default waves fade out first */
+}
+.slide-right-leave-active {
+  transition: transform 0.3s ease; /* no delay, leave first */
+}
+.slide-right-enter-from,
+.slide-right-leave-to {
+  transform: translateX(100%);
+}
+</style>

@@ -120,7 +120,7 @@
               <!-- Delete button -->
               <button
                 class="ml-1 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                @click.stop="$emit('deleteChat', chat.id)"
+                @click.stop="promptDelete(chat.id)"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -186,6 +186,36 @@
       </div>
     </aside>
   </Transition>
+
+  <!-- Delete Confirmation Popup -->
+  <Transition name="fade">
+    <div
+      v-if="deletingChatId"
+      class="fixed inset-0 bg-black/40 z-60 flex items-center justify-center px-6"
+      @click.self="cancelDelete"
+    >
+      <div class="bg-white rounded-xl shadow-xl p-6 max-w-72 xs:max-w-80 w-full text-center">
+        <p class="text-sm xs:text-base font-semibold text-gray-800 mb-2">Delete Chat?</p>
+        <p class="text-xs xs:text-sm text-gray-500 mb-6">
+          This chat will be removed from your history. You won't see it anymore.
+        </p>
+        <div class="flex gap-3">
+          <button
+            class="flex-1 py-2 rounded-lg text-xs xs:text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors"
+            @click="cancelDelete"
+          >
+            Cancel
+          </button>
+          <button
+            class="flex-1 py-2 rounded-lg text-xs xs:text-sm font-medium bg-[#DD0025] text-white hover:bg-red-700 transition-colors"
+            @click="confirmDelete"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -227,6 +257,7 @@ const searchQuery = ref('')
 const editingChatId = ref<string | null>(null)
 const editingTitle = ref('')
 const renameInputRef = ref<HTMLInputElement[] | null>(null)
+const deletingChatId = ref<string | null>(null)
 
 const startRename = (chat: Chat) => {
   editingChatId.value = chat.id
@@ -251,6 +282,21 @@ const confirmRename = (chatId: string) => {
 const cancelRename = () => {
   editingChatId.value = null
   editingTitle.value = ''
+}
+
+const promptDelete = (chatId: string) => {
+  deletingChatId.value = chatId
+}
+
+const confirmDelete = () => {
+  if (deletingChatId.value) {
+    emit('deleteChat', deletingChatId.value)
+    deletingChatId.value = null
+  }
+}
+
+const cancelDelete = () => {
+  deletingChatId.value = null
 }
 
 const filteredChats = computed(() => {

@@ -89,10 +89,12 @@ export const useChat = () => {
       const q = query(chatsRef, where('userId', '==', user.uid), orderBy('updatedAt', 'desc'))
 
       const snapshot = await getDocs(q)
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Chat[]
+      return snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter((chat: any) => !chat.deleted) as Chat[]
     } catch (error) {
       console.error('Error fetching chats:', error)
       throw error
@@ -288,6 +290,20 @@ export const useChat = () => {
     }
   }
 
+  // Soft-delete a chat (marks as deleted without removing from Firestore)
+  const softDeleteChat = async (chatId: string): Promise<void> => {
+    const user = await waitForAuth()
+    if (!user) throw new Error('User not authenticated')
+
+    try {
+      const chatRef = doc($firestore, 'chats', chatId)
+      await updateDoc(chatRef, { deleted: true, updatedAt: serverTimestamp() })
+    } catch (error) {
+      console.error('Error soft-deleting chat:', error)
+      throw error
+    }
+  }
+
   return {
     createChat,
     getUserChats,
@@ -298,5 +314,6 @@ export const useChat = () => {
     getTodayChat,
     getBotResponse,
     renameChat,
+    softDeleteChat,
   }
 }
