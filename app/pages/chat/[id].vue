@@ -25,7 +25,7 @@
       @delete-chat="handleDeleteChat"
       @rename-chat="handleRenameChat"
       @go-to-profile="navigateTo('/profile')"
-      @go-to-mood-meter="navigateTo('/mood-meter')"
+      @go-to-mood-meter="navigateTo('/mood/mood-meter')"
       @go-to-logout-modal="logoutModalOpen = true"
     />
 
