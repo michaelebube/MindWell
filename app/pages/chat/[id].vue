@@ -68,7 +68,7 @@
       </template>
 
       <!-- Typing indicator -->
-      <ChatTypingIndicator v-if="isBotTyping" />
+      <ChatTypingIndicator v-if="isBotTyping" class="sm:px-4 lg:px-6" />
     </div>
 
     <!-- Input -->

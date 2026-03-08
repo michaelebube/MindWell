@@ -4,7 +4,6 @@
  */
 
 import { onCall, HttpsError } from 'firebase-functions/v2/https'
-import { onRequest } from 'firebase-functions/v2/https'
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 import { detectIntent, type DialogflowResponse } from './services/dialogflowService'
@@ -302,111 +301,6 @@ export const chatWithDialogflow = onCall<{
     } catch (error) {
       console.error('Chat function error:', error)
       throw new HttpsError('internal', 'Failed to process message')
-    }
-  }
-)
-
-/**
- * Webhook endpoint for Dialogflow CX fulfillment
- * This allows Dialogflow to call back to your function for custom logic
- */
-export const dialogflowWebhook = onRequest(
-  {
-    cors: true,
-    // webhook may call LLM personalization — include secret dependency
-    secrets: ['SYSTEM_PROMPT'],
-  },
-  async (req, res) => {
-    if (req.method !== 'POST') {
-      res.status(405).send('Method not allowed')
-      return
-    }
-
-    try {
-      const body = req.body
-
-      // Extract session info
-      const sessionInfo = body.sessionInfo || {}
-      const parameters = sessionInfo.parameters || {}
-      const chatId = (parameters.chatId as string) || ''
-      const tag = body.fulfillmentInfo?.tag || ''
-      const text = body.text || ''
-
-      console.log('Webhook received:', { tag, text, parameters })
-
-      // Handle different fulfillment tags
-      let responseText = ''
-      let targetPage = ''
-      const sessionParams: Record<string, unknown> = {}
-
-      switch (tag) {
-        case 'get-mood-context':
-          // Fetch user's recent mood data for context
-          const moodUserId = parameters.userId as string
-          if (moodUserId) {
-            const moodContext = await getMoodContext(moodUserId)
-            sessionParams.moodContext = moodContext
-            responseText = moodContext
-              ? `I see you've been feeling ${moodContext.recentMood}. Let's talk about that.`
-              : 'How have you been feeling lately?'
-          }
-          break
-
-        case 'crisis-escalation':
-          // Handle crisis escalation
-          responseText = getCrisisResponse(text)
-          // Route to crisis page in Dialogflow
-          break
-
-        case 'personalized-response':
-          // LLM-enhanced personalization with intent context
-          const intentName = (parameters.intentName as string) || 'default'
-          const webhookUserId = parameters.userId as string
-          const webhookMoodContext = webhookUserId ? await getMoodContext(webhookUserId) : null
-          responseText = await generatePersonalizedResponse(
-            text,
-            intentName,
-            parameters,
-            chatId,
-            webhookMoodContext
-          )
-          break
-
-        default:
-          // No special handling, let Dialogflow continue normally
-          res.json({})
-          return
-      }
-
-      // Build webhook response
-      const webhookResponse: Record<string, unknown> = {
-        fulfillmentResponse: {
-          messages: [
-            {
-              text: {
-                text: [responseText],
-              },
-            },
-          ],
-        },
-      }
-
-      // Add session parameters if any
-      if (Object.keys(sessionParams).length > 0) {
-        webhookResponse.sessionInfo = {
-          parameters: sessionParams,
-        }
-      }
-
-      // Add target page if specified
-      if (targetPage) {
-        webhookResponse.targetPage = targetPage
-      }
-
-      res.json(webhookResponse)
-    } catch (error) {
-      console.error('Webhook error:', error)
-      res.status(500).json({ error: 'Webhook processing failed' })
     }
   }
 )
