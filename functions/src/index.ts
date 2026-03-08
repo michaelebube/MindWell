@@ -21,6 +21,8 @@ interface ChatResponse {
   isCrisis: boolean
   intent?: string
   confidence?: number
+  sentimentScore?: number | null
+  sentimentMagnitude?: number | null
 }
 
 /**
@@ -112,6 +114,8 @@ export const chatWithDialogflow = onCall<{
           confidence: dialogflowResponse.confidence,
           isFallback: dialogflowResponse.isFallback,
           isCrisis: dialogflowResponse.isCrisis,
+          sentimentScore: dialogflowResponse.sentimentScore,
+          sentimentMagnitude: dialogflowResponse.sentimentMagnitude,
           responseTextPreview: dialogflowResponse.responseText?.slice?.(0, 200),
         })
       } catch (dialogflowError) {
@@ -171,14 +175,20 @@ export const chatWithDialogflow = onCall<{
       if (dialogflowResponse.isCrisis) {
         const response = dialogflowResponse.responseText || getCrisisResponse(message)
         // ✅ SAVE BOT RESPONSE
-        await db.collection('chats').doc(chatId).collection('messages').add({
-          chatId,
-          content: response,
-          role: 'assistant',
-          timestamp: new Date(),
-          isCrisis: true,
-          intent: dialogflowResponse.intent,
-        })
+        await db
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .add({
+            chatId,
+            content: response,
+            role: 'assistant',
+            timestamp: new Date(),
+            isCrisis: true,
+            intent: dialogflowResponse.intent,
+            sentimentScore: dialogflowResponse.sentimentScore ?? null,
+            sentimentMagnitude: dialogflowResponse.sentimentMagnitude ?? null,
+          })
 
         await logCrisisEvent(userId, chatId, message, ['dialogflow_crisis_intent'])
         return {
@@ -186,6 +196,8 @@ export const chatWithDialogflow = onCall<{
           isCrisis: true,
           intent: dialogflowResponse.intent,
           confidence: dialogflowResponse.confidence,
+          sentimentScore: dialogflowResponse.sentimentScore ?? null,
+          sentimentMagnitude: dialogflowResponse.sentimentMagnitude ?? null,
         }
       }
 
@@ -197,13 +209,19 @@ export const chatWithDialogflow = onCall<{
         const response = getCrisisResponse(message)
 
         // ✅ SAVE BOT RESPONSE
-        await db.collection('chats').doc(chatId).collection('messages').add({
-          chatId,
-          content: response,
-          role: 'assistant',
-          timestamp: new Date(),
-          isCrisis: true,
-        })
+        await db
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .add({
+            chatId,
+            content: response,
+            role: 'assistant',
+            timestamp: new Date(),
+            isCrisis: true,
+            sentimentScore: dialogflowResponse.sentimentScore ?? null,
+            sentimentMagnitude: dialogflowResponse.sentimentMagnitude ?? null,
+          })
 
         await logCrisisEvent(userId, chatId, message, keywordResult.matchedKeywords)
         return {
@@ -211,6 +229,8 @@ export const chatWithDialogflow = onCall<{
           isCrisis: true,
           intent: 'crisis_fallback_keywords',
           confidence: 0.6,
+          sentimentScore: dialogflowResponse.sentimentScore ?? null,
+          sentimentMagnitude: dialogflowResponse.sentimentMagnitude ?? null,
         }
       }
 
@@ -225,8 +245,14 @@ export const chatWithDialogflow = onCall<{
           dialogflowResponse.intent,
           dialogflowResponse.parameters,
           chatId,
-          moodContext
+          moodContext,
+          {
+            score: dialogflowResponse.sentimentScore ?? null,
+            magnitude: dialogflowResponse.sentimentMagnitude ?? null,
+          }
         )
+
+        console.log('LLM response:', personalizedMessage)
 
         await db.collection('chats').doc(chatId).collection('messages').add({
           chatId,
@@ -235,6 +261,8 @@ export const chatWithDialogflow = onCall<{
           timestamp: new Date(),
           isCrisis: false,
           intent: dialogflowResponse.intent,
+          sentimentScore: dialogflowResponse.sentimentScore,
+          sentimentMagnitude: dialogflowResponse.sentimentMagnitude,
         })
 
         return {
@@ -242,24 +270,34 @@ export const chatWithDialogflow = onCall<{
           isCrisis: false,
           intent: dialogflowResponse.intent,
           confidence: dialogflowResponse.confidence,
+          sentimentScore: dialogflowResponse.sentimentScore,
+          sentimentMagnitude: dialogflowResponse.sentimentMagnitude,
         }
       }
 
       // Step 6: Return Dialogflow response for any remaining cases
-      await db.collection('chats').doc(chatId).collection('messages').add({
-        chatId,
-        content: dialogflowResponse.responseText,
-        role: 'assistant',
-        timestamp: new Date(),
-        isCrisis: false,
-        intent: dialogflowResponse.intent,
-      })
+      await db
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .add({
+          chatId,
+          content: dialogflowResponse.responseText,
+          role: 'assistant',
+          timestamp: new Date(),
+          isCrisis: false,
+          intent: dialogflowResponse.intent,
+          sentimentScore: dialogflowResponse.sentimentScore ?? null,
+          sentimentMagnitude: dialogflowResponse.sentimentMagnitude ?? null,
+        })
 
       return {
         message: dialogflowResponse.responseText,
         isCrisis: false,
         intent: dialogflowResponse.intent,
         confidence: dialogflowResponse.confidence,
+        sentimentScore: dialogflowResponse.sentimentScore ?? null,
+        sentimentMagnitude: dialogflowResponse.sentimentMagnitude ?? null,
       }
     } catch (error) {
       console.error('Chat function error:', error)

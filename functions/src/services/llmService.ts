@@ -145,7 +145,8 @@ export async function generatePersonalizedResponse(
   intentName: string,
   parameters: Record<string, unknown>,
   chatId?: string | null,
-  moodContext?: { recentMood: string; moodScore: number } | null
+  moodContext?: { recentMood: string; moodScore: number } | null,
+  sentiment?: { score: number | null; magnitude: number | null } | null
 ): Promise<string> {
   // SAFETY CHECK 1: Check user message for crisis language
   if (containsCrisisLanguage(userMessage)) {
@@ -161,6 +162,12 @@ export async function generatePersonalizedResponse(
     ? `User recently reported feeling "${moodContext.recentMood}" (score: ${moodContext.moodScore}/10)`
     : 'No recent mood data available'
 
+  // Build sentiment context string
+  const sentimentString =
+    sentiment?.score != null
+      ? `Dialogflow sentiment analysis of this message: score=${sentiment.score.toFixed(2)} (range -1 negative to +1 positive), magnitude=${sentiment.magnitude?.toFixed(2) ?? 'N/A'} (emotional intensity)`
+      : 'No sentiment data available'
+
   const recentMessages = await getRecentMessagesForLLM(chatId || '')
 
   // Build the system prompt
@@ -168,6 +175,7 @@ export async function generatePersonalizedResponse(
     .replace('{intentName}', intentName)
     .replace('{specificGuidance}', specificGuidance)
     .replace('{moodContext}', moodString)
+    .replace('{sentimentContext}', sentimentString)
 
   const systemPrompt = base
 
