@@ -13,7 +13,7 @@
 
         <!-- Message -->
         <p class="xs:text-lg text-[14px] text-gray-600 mb-6">
-          Are you sure about this, {{ userName }} ?
+          Are you sure about this, {{ userName }}?
         </p>
 
         <!-- Buttons -->
