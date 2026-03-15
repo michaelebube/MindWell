@@ -108,8 +108,6 @@ import huggingIcon from '../assets/svg/noto_people-hugging.svg'
 import waveLg from '../assets/svg/wave-big.svg'
 import topSVG from '../assets/svg/green-blob.svg'
 
-console.log($auth, $firestore)
-
 const showSplash = ref(true)
 
 onMounted(() => {
