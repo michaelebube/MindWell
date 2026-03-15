@@ -31,7 +31,6 @@ interface ChatResponse {
 export const chatWithDialogflow = onCall<{
   message: string
   chatId: string
-  userId: string
 }>(
   {
     // Optional: Add rate limiting and other options
@@ -46,7 +45,8 @@ export const chatWithDialogflow = onCall<{
       throw new HttpsError('unauthenticated', 'User must be authenticated')
     }
 
-    const { message, chatId, userId } = request.data
+    const { message, chatId } = request.data
+    const userId = request.auth.uid as string
 
     if (!message || typeof message !== 'string') {
       throw new HttpsError('invalid-argument', 'Message is required')
