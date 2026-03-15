@@ -162,7 +162,6 @@ definePageMeta({
 })
 
 const router = useRouter()
-const { $auth } = useNuxtApp()
 const { getLatestMoodLog, getMoodLogsByDays } = useMoodLog()
 
 const isLoading = ref(true)
