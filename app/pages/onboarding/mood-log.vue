@@ -1,13 +1,13 @@
 <template>
   <div class="fixed inset-0 flex items-center justify-center px-6 overflow-hidden">
     <div
-      class="bg-[#FBFBFB] xs:px-6 px-8 xs:py-6 py-5 shadow-[5.5px_5.5px_27.5px_0px_rgba(0,0,0,0.25)] rounded-[10px] xs:max-w-80 max-w-60 text-center"
+      class="bg-[#FBFBFB] xs:px-6 sm:px-8 md:px-10 xl:px-12 px-8 xs:py-6 py-5 shadow-[5.5px_5.5px_27.5px_0px_rgba(0,0,0,0.25)] rounded-[10px] xs:max-w-80 sm:max-w-100 md:max-w-140 lg:max-w-160 xl:max-w-180 max-w-60 text-center"
     >
-      <p class="xs:text-xl text-[#80BA41] text-sm xs:leading-6 leading-5">
+      <p class="xs:text-xl lg:text-2xl text-[#80BA41] text-sm xs:leading-6 leading-5">
         How do you feel right now, <span class="font-semibold">{{ userName }}</span
         >?
       </p>
-      <div class="flex justify-between items-start xs:py-8 py-5">
+      <div class="flex justify-between items-start xs:py-8 sm:pt-12 md:pt-12 py-5">
         <button
           v-for="mood in moods"
           :key="mood.value"

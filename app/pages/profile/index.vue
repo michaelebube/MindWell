@@ -1,44 +1,62 @@
 <template>
-  <div class="min-h-screen relative flex flex-col">
+  <div class="min-h-screen relative flex flex-1 flex-col">
     <div
       class="absolute z-0 inset-0 opacity-5 bg-cover bg-center bg-no-repeat"
       :style="{ backgroundImage: `url(${bgImg})` }"
     ></div>
     <!-- Header -->
-    <div class="flex items-center justify-between xs:px-4 px-3 pt-8 pb-2 z-10">
+    <div
+      class="flex items-center justify-between xs:px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 px-3 pt-8 pb-2 z-10"
+    >
       <button aria-label="Go Back" @click="goBack">
         <div
-          class="bg-[#1565C0] w-10 h-9 rounded-lg flex items-center justify-center cursor-pointer"
+          class="bg-[#1565C0] md:w-12 md:h-11 xl:h-13 xl:w-14 w-10 h-9 rounded-lg flex items-center justify-center cursor-pointer"
         >
-          <img :src="backArrowIcon" alt="Back Arrow" class="w-9 h-9 p-2" />
+          <img :src="backArrowIcon" alt="Back Arrow" class="w-9 h-9 md:w-10 md:h-10 p-2" />
         </div>
       </button>
-      <img :src="logo" alt="MindWell Logo" class="-mr-2 w-20 h-20" />
+      <img
+        :src="logo"
+        alt="MindWell Logo"
+        class="-mr-2 w-20 h-20 md:h-28 md:w-28 xl:w-32 xl:h-32"
+      />
     </div>
 
-    <main class="mt-4 z-10 px-4">
+    <main class="mt-4 z-10 px-4 sm:flex-col sm:flex-1">
       <!-- Profile Info Section -->
       <section class="flex flex-col items-center">
         <img
           :src="profileCircleIcon"
           alt="Profile Icon"
-          class="w-10 h-10 xs:w-14 xs:h-14 text-center"
+          class="w-10 h-10 xs:w-14 xs:h-14 lg:w-18 lg:h-18 text-center"
         />
-        <div class="px-7 py-2.5 bg-[#FBFBFB] rounded-[10px] shadow-2xl mt-4 text-center">
-          <h2 class="text-xs xs:text-sm font-medium text-[#80BA41] mb-1">Anonymous Username</h2>
-          <p class="text-sm xs:text-[16px] font-semibold text-[#2558A6]">{{ userName }}</p>
+        <div
+          class="px-7 py-2.5 bg-[#FBFBFB] lg:px-9 lg:py-3.5 xl:px-13 xl:py-4 rounded-[10px] shadow-2xl mt-4 text-center"
+        >
+          <h2 class="text-xs xs:text-sm lg:text-[16px] xl:text-lg font-medium text-[#80BA41] mb-1">
+            Anonymous Username
+          </h2>
+          <p class="text-sm xs:text-[16px] lg:text-lg font-semibold text-[#2558A6]">
+            {{ userName }}
+          </p>
         </div>
 
-        <div class="px-10 py-4.5 max-w-80 bg-[#FBFBFB] rounded-[10px] shadow-2xl mt-4 text-center">
-          <h2 class="text-xs xs:text-sm font-medium text-[#80BA41] mb-1">Email</h2>
-          <p class="text-sm xs:text-[16px] font-semibold text-[#2558A6]">{{ userEmail }}</p>
+        <div
+          class="px-10 py-4.5 xl:px-12 xl:py-5 max-w-80 lg:max-w-92 bg-[#FBFBFB] rounded-[10px] shadow-2xl mt-4 text-center"
+        >
+          <h2 class="text-xs xs:text-sm lg:text-[16px] xl:text-lg font-medium text-[#80BA41] mb-1">
+            Email
+          </h2>
+          <p class="text-sm xs:text-[16px] lg:text-lg font-semibold text-[#2558A6]">
+            {{ userEmail }}
+          </p>
         </div>
       </section>
 
       <!-- Change Password Section -->
-      <section class="z-10 mt-8 xs:mt-14 mb-10">
+      <section class="z-10 mt-8 xs:mt-14 lg:mt-10 mb-10 sm:mb-20">
         <div
-          class="mx-auto max-w-68 xs:max-w-80 bg-[#FBFBFB] rounded-[10px] shadow-2xl px-5 py-5 relative overflow-hidden transition-all duration-300"
+          class="mx-auto max-w-68 xs:max-w-80 xl:max-w-92 bg-[#FBFBFB] rounded-[10px] shadow-2xl px-5 py-5 relative overflow-hidden transition-all duration-300"
           :class="{ 'pt-12': formState === 'success' || formState === 'error' }"
         >
           <!-- Overlay when success/error -->
@@ -65,13 +83,15 @@
             {{ errorMessage }}
           </div>
 
-          <h2 class="text-[#80BA41] font-medium text-sm text-center mb-4">Change Password</h2>
+          <h2 class="text-[#80BA41] font-medium text-sm lg:text-[16px] xl:text-lg text-center mb-4">
+            Change Password
+          </h2>
 
-          <form class="flex flex-col gap-3" @submit.prevent="handleChangePassword">
+          <form class="flex flex-col gap-3 lg:gap-4" @submit.prevent="handleChangePassword">
             <!-- Current Password -->
             <div class="flex flex-col gap-2">
               <label
-                class="text-[#80BA41] opacity-90 xs:text-xs font-light text-[10px]"
+                class="text-[#80BA41] opacity-90 xs:text-xs lg:text-sm xl:text-[15px] font-light text-[10px]"
                 for="currentPassword"
               >
                 Current Password
@@ -106,7 +126,7 @@
             <!-- New Password -->
             <div class="flex flex-col gap-2">
               <label
-                class="text-[#80BA41] opacity-80 xs:text-xs font-light text-[10px]"
+                class="text-[#80BA41] opacity-80 xs:text-xs lg:text-sm xl:text-[15px] font-light text-[10px]"
                 for="newPassword"
               >
                 New Password
@@ -137,7 +157,7 @@
             <!-- Confirm New Password -->
             <div class="flex flex-col gap-2">
               <label
-                class="text-[#80BA41] opacity-80 font-light xs:text-xs text-[10px]"
+                class="text-[#80BA41] opacity-80 font-light xs:text-xs lg:text-sm xl:text-[15px] text-[10px]"
                 for="confirmPassword"
               >
                 Confirm New Password
@@ -187,6 +207,18 @@
         </div>
       </section>
     </main>
+
+    <img
+      class="absolute bottom-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
+      :src="bottomBlueBlob"
+      alt=""
+    />
+
+    <img
+      class="absolute bottom-0 right-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
+      :src="rightSideBlue"
+      alt=""
+    />
   </div>
 </template>
 
@@ -198,6 +230,8 @@ import bgImg from '../../assets/images/bgImage.png'
 import backArrowIcon from '../../assets/svg/back-arrow.svg'
 import showPasswordIcon from '../../assets/svg/show-password.svg'
 import hidePasswordIcon from '../../assets/svg/hide-password.svg'
+import bottomBlueBlob from '../../assets/svg/bottomBlueSVG.svg'
+import rightSideBlue from '../../assets/svg/rightSideBlue.svg'
 
 const { $auth } = useNuxtApp()
 

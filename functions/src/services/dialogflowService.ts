@@ -3,22 +3,24 @@
  * Handles communication with Dialogflow CX for intent detection and fulfillment
  */
 
-import { SessionsClient } from '@google-cloud/dialogflow-cx';
-import { defineString } from 'firebase-functions/params';
+import { SessionsClient } from '@google-cloud/dialogflow-cx'
+import { defineString } from 'firebase-functions/params'
 
 // Define config params (set via firebase functions:config:set or .env)
-const dialogflowProjectId = defineString('DIALOGFLOW_PROJECT_ID');
-const dialogflowLocation = defineString('DIALOGFLOW_LOCATION', { default: 'us-central1' });
-const dialogflowAgentId = defineString('DIALOGFLOW_AGENT_ID');
-const dialogflowLanguageCode = defineString('DIALOGFLOW_LANGUAGE_CODE', { default: 'en' });
+const dialogflowProjectId = defineString('DIALOGFLOW_PROJECT_ID')
+const dialogflowLocation = defineString('DIALOGFLOW_LOCATION', { default: 'us-central1' })
+const dialogflowAgentId = defineString('DIALOGFLOW_AGENT_ID')
+const dialogflowLanguageCode = defineString('DIALOGFLOW_LANGUAGE_CODE', { default: 'en' })
 
 export interface DialogflowResponse {
-  responseText: string;
-  intent: string;
-  confidence: number;
-  isFallback: boolean;
-  parameters: Record<string, unknown>;
-  isCrisis: boolean;
+  responseText: string
+  intent: string
+  confidence: number
+  isFallback: boolean
+  parameters: Record<string, unknown>
+  isCrisis: boolean
+  sentimentScore?: number | null
+  sentimentMagnitude?: number | null
 }
 
 /**
@@ -29,15 +31,15 @@ export async function detectIntent(
   sessionId: string,
   chatId: string
 ): Promise<DialogflowResponse> {
-  const projectId = dialogflowProjectId.value();
-  const location = dialogflowLocation.value();
-  const agentId = dialogflowAgentId.value();
-  const languageCode = dialogflowLanguageCode.value();
+  const projectId = dialogflowProjectId.value()
+  const location = dialogflowLocation.value()
+  const agentId = dialogflowAgentId.value()
+  const languageCode = dialogflowLanguageCode.value()
 
   // Create sessions client
   const client = new SessionsClient({
     apiEndpoint: `${location}-dialogflow.googleapis.com`,
-  });
+  })
 
   // Build session path
   const sessionPath = client.projectLocationAgentSessionPath(
@@ -45,7 +47,7 @@ export async function detectIntent(
     location,
     agentId,
     sessionId
-  );
+  )
 
   // Build the request
   const request = {
@@ -57,64 +59,71 @@ export async function detectIntent(
       languageCode,
     },
     queryParams: {
-        parameters: {
-            fields: {
-                chatId: {
-                stringValue: chatId,
-                }
-        }
-    }
-    }
-  };
+      analyzeQueryTextSentiment: true,
+      parameters: {
+        fields: {
+          chatId: {
+            stringValue: chatId,
+          },
+        },
+      },
+    },
+  }
 
   try {
     // Send request to Dialogflow CX
-    console.log('Dialogflow detectIntent request:', JSON.stringify(request));
-    const [response] = await client.detectIntent(request);
+    console.log('Dialogflow detectIntent request:', JSON.stringify(request))
+    const [response] = await client.detectIntent(request)
 
-    console.log('Dialogflow raw response received');
+    console.log('Dialogflow raw response received')
     try {
-      console.log(JSON.stringify(response, null, 2));
+      console.log(JSON.stringify(response, null, 2))
     } catch (e) {
-      console.log('Could not stringify full response for logging', e);
+      console.log('Could not stringify full response for logging', e)
     }
 
-    const queryResult = response.queryResult;
-    console.log('Dialogflow CX queryResult is working');
-    
+    const queryResult = response.queryResult
+    console.log('Dialogflow CX queryResult is working')
+
     if (!queryResult) {
-      throw new Error('No query result from Dialogflow');
+      throw new Error('No query result from Dialogflow')
     }
 
     // Extract response text from fulfillment messages
-    let responseText = '';
+    let responseText = ''
     if (queryResult.responseMessages && queryResult.responseMessages.length > 0) {
       for (const message of queryResult.responseMessages) {
         if (message.text && message.text.text) {
-          responseText += message.text.text.join('\n');
+          responseText += message.text.text.join('\n')
         }
       }
     }
 
+    const sentiment = queryResult.sentimentAnalysisResult
+    const sentimentScore = sentiment?.score ?? null
+    const sentimentMagnitude = sentiment?.magnitude ?? null
+
     // Check if this is a fallback/no-match intent
-    const isFallback = queryResult.match?.matchType === 'NO_MATCH' || 
-                       queryResult.intent?.displayName?.toLowerCase().includes('fallback') ||
-                       false;
+    const isFallback =
+      queryResult.match?.matchType === 'NO_MATCH' ||
+      queryResult.intent?.displayName?.toLowerCase().includes('fallback') ||
+      false
 
     // Check for crisis intent (you'll define this in Dialogflow CX)
-    const isCrisis = queryResult.intent?.displayName?.toLowerCase().includes('crisis') ||
-                     queryResult.intent?.displayName?.toLowerCase().includes('emergency') ||
-                     queryResult.intent?.displayName?.toLowerCase().includes('self-harm') ||
-                     false;
+    const isCrisis =
+      queryResult.intent?.displayName?.toLowerCase().includes('crisis') ||
+      queryResult.intent?.displayName?.toLowerCase().includes('emergency') ||
+      queryResult.intent?.displayName?.toLowerCase().includes('self-harm') ||
+      false
 
     // Extract intent confidence
-    const confidence = queryResult.match?.confidence || 0;
+    const confidence = queryResult.match?.confidence || 0
 
     // Extract parameters
-    const parameters: Record<string, unknown> = {};
+    const parameters: Record<string, unknown> = {}
     if (queryResult.parameters?.fields) {
       for (const [key, value] of Object.entries(queryResult.parameters.fields)) {
-        parameters[key] = value;
+        parameters[key] = value
       }
     }
 
@@ -125,10 +134,12 @@ export async function detectIntent(
       isFallback,
       parameters,
       isCrisis,
-    };
+      sentimentScore,
+      sentimentMagnitude,
+    }
   } catch (error) {
-    console.error('Dialogflow CX error:', error);
-    throw error;
+    console.error('Dialogflow CX error:', error)
+    throw error
   }
 }
 
@@ -140,21 +151,21 @@ export async function sendEvent(
   sessionId: string,
   parameters?: Record<string, unknown>
 ): Promise<DialogflowResponse> {
-  const projectId = dialogflowProjectId.value();
-  const location = dialogflowLocation.value();
-  const agentId = dialogflowAgentId.value();
-  const languageCode = dialogflowLanguageCode.value();
+  const projectId = dialogflowProjectId.value()
+  const location = dialogflowLocation.value()
+  const agentId = dialogflowAgentId.value()
+  const languageCode = dialogflowLanguageCode.value()
 
   const client = new SessionsClient({
     apiEndpoint: `${location}-dialogflow.googleapis.com`,
-  });
+  })
 
   const sessionPath = client.projectLocationAgentSessionPath(
     projectId,
     location,
     agentId,
     sessionId
-  );
+  )
 
   const request = {
     session: sessionPath,
@@ -164,17 +175,17 @@ export async function sendEvent(
       },
       languageCode,
     },
-  };
+  }
 
   try {
-    const [response] = await client.detectIntent(request);
-    const queryResult = response.queryResult;
+    const [response] = await client.detectIntent(request)
+    const queryResult = response.queryResult
 
-    let responseText = '';
+    let responseText = ''
     if (queryResult?.responseMessages) {
       for (const message of queryResult.responseMessages) {
         if (message.text?.text) {
-          responseText += message.text.text.join('\n');
+          responseText += message.text.text.join('\n')
         }
       }
     }
@@ -186,9 +197,11 @@ export async function sendEvent(
       isFallback: false,
       isCrisis: false,
       parameters: parameters || {},
-    };
+      sentimentScore: null,
+      sentimentMagnitude: null,
+    }
   } catch (error) {
-    console.error('Dialogflow CX event error:', error);
-    throw error;
+    console.error('Dialogflow CX event error:', error)
+    throw error
   }
 }

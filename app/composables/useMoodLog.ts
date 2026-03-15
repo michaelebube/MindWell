@@ -1,4 +1,13 @@
-import { collection, addDoc, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore'
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  limit,
+  Timestamp,
+} from 'firebase/firestore'
 import { onAuthStateChanged, type User } from 'firebase/auth'
 
 interface MoodLog {
@@ -15,11 +24,11 @@ export const useMoodLog = () => {
 
   // Helper to wait for auth state to be ready
   const waitForAuth = (): Promise<User | null> => {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if ($auth.currentUser) {
         resolve($auth.currentUser)
       } else {
-        const unsubscribe = onAuthStateChanged($auth, (user) => {
+        const unsubscribe = onAuthStateChanged($auth, user => {
           unsubscribe()
           resolve(user)
         })
@@ -36,7 +45,7 @@ export const useMoodLog = () => {
     if (!user) throw new Error('User not authenticated')
 
     const today = new Date()
-    const dateString = today.toISOString().split('T')[0] 
+    const dateString = today.toISOString().split('T')[0]
 
     try {
       const moodLogData = {
@@ -87,7 +96,7 @@ export const useMoodLog = () => {
       const q = query(moodLogsRef, where('userId', '==', user.uid))
 
       const snapshot = await getDocs(q)
-      return snapshot.docs.map((doc) => ({
+      return snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       }))
@@ -124,10 +133,39 @@ export const useMoodLog = () => {
     }
   }
 
+  const getMoodLogsByDays = async (days: number): Promise<MoodLog[]> => {
+    const user = await waitForAuth()
+    if (!user) throw new Error('User not authenticated')
+
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days)
+    startDate.setHours(0, 0, 0, 0)
+
+    try {
+      const moodLogsRef = collection($firestore, 'moodLogs')
+      const q = query(
+        moodLogsRef,
+        where('userId', '==', user.uid),
+        where('createdAt', '>=', Timestamp.fromDate(startDate)),
+        orderBy('createdAt', 'desc')
+      )
+
+      const snapshot = await getDocs(q)
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as MoodLog[]
+    } catch (error) {
+      console.error('Error fetching mood logs by days:', error)
+      throw error
+    }
+  }
+
   return {
     logMood,
     hasMoodLoggedToday,
     getUserMoodLogs,
     getLatestMoodLog,
+    getMoodLogsByDays,
   }
 }

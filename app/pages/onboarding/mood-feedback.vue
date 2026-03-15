@@ -18,14 +18,14 @@
         </div>
 
         <!-- Mood content -->
-        <div v-else class="xs:max-w-80 max-w-60 text-center flex flex-col">
+        <div v-else class="xs:max-w-80 max-w-60  lg:max-w-100 text-center  flex flex-col">
           <img
             :src="moodData?.icon"
             :alt="moodData?.alt"
             class="mx-auto xs:h-35 xs:w-35 h-16 w-16 mb-6"
           />
           <h1
-            class="xs:text-4xl text-[#80BA41] text-sm xs:leading-12 xs:tracking-wide leading-5 font-medium font-['Indie_Flower']"
+            class="xs:text-4xl text-[#80BA41] text-sm xs:leading-12 lg:text-5xl xs:tracking-wide leading-5 lg:leading-14 font-medium font-['Indie_Flower']"
           >
             {{ moodData?.message }}
           </h1>
@@ -33,16 +33,16 @@
       </main>
     </div>
 
-    <!-- Footer fixed at bottom -->
-    <footer class="absolute bottom-0 left-0 right-0">
+    <!-- Footer fixed at bottom Mobile -->
+    <footer class="absolute bottom-0 sm:bottom-20 lg:bottom-18 md:bottom-24 left-0 right-0">
       <div class="relative">
         <!-- Wave image -->
-        <img :src="wave" alt="wave" class="w-full h-auto" />
+        <img :src="wave" alt="wave" class="w-full h-auto sm:hidden" />
 
         <!-- Content on top of wave -->
         <div class="absolute inset-0 flex flex-col items-center justify-center xs:pt-2 pt-1">
           <h1
-            class="text-white xs:text-[16px] text-[14px] font-semibold mb-4 flex items-center gap-2"
+            class="text-white xs:text-[16px] sm:text-[#80BA41] md:text-lg text-[14px] lg:text-xl font-normal mb-4 flex items-center gap-2"
           >
             We are here to help
             <span class="text-[16px] xs:text-[14px]"
@@ -52,7 +52,7 @@
 
           <NuxtLink
             to="/chat"
-            class="bg-white text-[#80BA41] xs:px-10 px-8 xs:py-2 py-1 rounded-lg xs:text-sm text-xs font-semibold hover:bg-gray-50 transition-colors mb-2 shadow-lg"
+            class="bg-white sm:bg-[#2558A6] text-[#80BA41] xs:px-10 px-8 xs:py-2 md:px-12 md:text-[16px] lg:text-xl lg:px-12 py-1 rounded-lg xs:text-sm text-xs font-semibold hover:bg-gray-50 transition-colors mb-2 shadow-lg"
           >
             Let's chat!
           </NuxtLink>

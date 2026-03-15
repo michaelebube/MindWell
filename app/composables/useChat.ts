@@ -45,11 +45,11 @@ export const useChat = () => {
 
   // Helper to wait for auth state to be ready
   const waitForAuth = (): Promise<User | null> => {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if ($auth.currentUser) {
         resolve($auth.currentUser)
       } else {
-        const unsubscribe = onAuthStateChanged($auth, (user) => {
+        const unsubscribe = onAuthStateChanged($auth, user => {
           unsubscribe()
           resolve(user)
         })
@@ -86,17 +86,15 @@ export const useChat = () => {
 
     try {
       const chatsRef = collection($firestore, 'chats')
-      const q = query(
-        chatsRef,
-        where('userId', '==', user.uid),
-        orderBy('updatedAt', 'desc')
-      )
+      const q = query(chatsRef, where('userId', '==', user.uid), orderBy('updatedAt', 'desc'))
 
       const snapshot = await getDocs(q)
-      return snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Chat[]
+      return snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter((chat: any) => !chat.deleted) as Chat[]
     } catch (error) {
       console.error('Error fetching chats:', error)
       throw error
@@ -121,12 +119,12 @@ export const useChat = () => {
 
       const userMsgRef = await addDoc(messagesRef, userMessageData)
 
-        // const response = await getBotResponse(content, chatId)
+      // const response = await getBotResponse(content, chatId)
 
       // Update chat's updatedAt and title if first message
       const chatRef = doc($firestore, 'chats', chatId)
       const chatUpdate: Record<string, unknown> = { updatedAt: serverTimestamp() }
-      
+
       // Set title from first message (truncated)
       // const messagesRef = collection($firestore, 'chats', chatId, 'messages')
       const messagesSnapshot = await getDocs(query(messagesRef, where('role', '==', 'user')))
@@ -136,12 +134,12 @@ export const useChat = () => {
       await updateDoc(chatRef, chatUpdate)
 
       return {
-      //     id: 'pending',
-      // chatId,
-      // content,
-      // role: 'user' as const,
-      // timestamp: Timestamp.now(),
-      // isCrisis: false,
+        //     id: 'pending',
+        // chatId,
+        // content,
+        // role: 'user' as const,
+        // timestamp: Timestamp.now(),
+        // isCrisis: false,
         id: userMsgRef.id,
         ...userMessageData,
       }
@@ -189,7 +187,7 @@ export const useChat = () => {
       const q = query(messagesRef, orderBy('timestamp', 'asc'))
 
       const snapshot = await getDocs(q)
-      return snapshot.docs.map((doc) => ({
+      return snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       })) as Message[]
@@ -207,8 +205,8 @@ export const useChat = () => {
     const messagesRef = collection($firestore, 'chats', chatId, 'messages')
     const q = query(messagesRef, orderBy('timestamp', 'asc'))
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const messages = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const messages = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       })) as Message[]
@@ -250,10 +248,7 @@ export const useChat = () => {
   }
 
   // Get bot response from Dialogflow via Cloud Function
-  const getBotResponse = async (
-    userMessage: string,
-    chatId: string
-  ): Promise<ChatResponse> => {
+  const getBotResponse = async (userMessage: string, chatId: string): Promise<ChatResponse> => {
     const user = await waitForAuth()
     if (!user) throw new Error('User not authenticated')
 
@@ -281,6 +276,34 @@ export const useChat = () => {
     }
   }
 
+  // Rename a chat
+  const renameChat = async (chatId: string, newTitle: string): Promise<void> => {
+    const user = await waitForAuth()
+    if (!user) throw new Error('User not authenticated')
+
+    try {
+      const chatRef = doc($firestore, 'chats', chatId)
+      await updateDoc(chatRef, { title: newTitle, updatedAt: serverTimestamp() })
+    } catch (error) {
+      console.error('Error renaming chat:', error)
+      throw error
+    }
+  }
+
+  // Soft-delete a chat (marks as deleted without removing from Firestore)
+  const softDeleteChat = async (chatId: string): Promise<void> => {
+    const user = await waitForAuth()
+    if (!user) throw new Error('User not authenticated')
+
+    try {
+      const chatRef = doc($firestore, 'chats', chatId)
+      await updateDoc(chatRef, { deleted: true, updatedAt: serverTimestamp() })
+    } catch (error) {
+      console.error('Error soft-deleting chat:', error)
+      throw error
+    }
+  }
+
   return {
     createChat,
     getUserChats,
@@ -290,5 +313,7 @@ export const useChat = () => {
     subscribeToMessages,
     getTodayChat,
     getBotResponse,
+    renameChat,
+    softDeleteChat,
   }
 }
