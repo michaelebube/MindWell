@@ -148,7 +148,6 @@
 <script setup lang="ts">
 import { Doughnut } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-import { Timestamp } from 'firebase/firestore'
 import bgImg from '../../assets/images/bgImage.png'
 import moodMeterIcon from '../../assets/svg/mood-meter.svg'
 import logo from '../../assets/svg/logo.svg'
@@ -162,7 +161,6 @@ definePageMeta({
 })
 
 const router = useRouter()
-const { $auth } = useNuxtApp()
 const { getLatestMoodLog, getMoodLogsByDays } = useMoodLog()
 
 const isLoading = ref(true)
