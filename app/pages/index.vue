@@ -30,11 +30,11 @@
 
       <!-- Chat bubbles section -->
       <div class="flex-1 min-h-0 flex flex-col relative z-10 overflow-y-auto">
-        <div class="tablet-v-center xs:pt-10 pt-5 xs:space-y-7 sm:pt-2 space-y-5">
+        <div class="tablet-v-center tablet-statement-stack xs:pt-10 pt-5 xs:space-y-7 sm:pt-2 space-y-5">
           <div
             v-for="(statement, index) in displayedStatements"
             :key="index"
-            class="bg-[#80BA41] text-white xs:px-6 px-4 xs:py-3 sm:py-4 py-2 lg:py-4 xs:max-w-64 max-w-56 sm:max-w-110 lg:max-w-140 xl:max-w-180 xl:text-center xs:text-sm text-xs sm:text-[15px] lg:text-lg xs:leading-5 leading-4 font-medium"
+            class="tablet-statement bg-[#80BA41] text-white xs:px-6 px-4 xs:py-3 sm:py-4 py-2 lg:py-4 xs:max-w-64 max-w-56 sm:max-w-110 lg:max-w-140 xl:max-w-180 xl:text-center xs:text-sm text-xs sm:text-[15px] lg:text-lg xs:leading-5 leading-4 font-medium"
             :class="
               index % 2 === 0
                 ? 'rounded-tr-[40px] rounded-br-xl'

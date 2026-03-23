@@ -19,7 +19,6 @@ const waitForAuthUser = async (): Promise<User | null> => {
 }
 
 export default defineNuxtRouteMiddleware(async to => {
-  // Firebase is only provided by a client plugin in this app.
   if (import.meta.server) {
     return
   }

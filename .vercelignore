@@ -1,0 +1,13 @@
+functions
+.firebase
+.firebaserc
+firebase.json
+firestore.rules
+firestore.indexes.json
+firestore-debug.log
+firebase-debug.log
+firebase-debug.*.log
+dialogflowfulfillmentwebhookbackup.txt
+system_prompt.txt
+.vscode
+.nuxt
