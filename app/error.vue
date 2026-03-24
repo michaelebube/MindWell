@@ -5,12 +5,12 @@
       :style="{ backgroundImage: `url(${bgImg})` }"
     ></div>
 
-   
-
-    <div class="relative z-10 flex min-h-[calc(100vh-6rem)] items-center justify-center px-6 pb-10 pt-4">
-      <div class="flex w-full max-w-5xl flex-col items-center gap-6 lg:flex-row lg:items-stretch lg:gap-8">
+    <div
+      class="relative z-10 flex min-h-[calc(100vh-6rem)] items-center justify-center px-6 pb-10 pt-4"
+    >
+      <div class="flex w-full max-w-5xl flex-col items-center gap-6 lg:items-stretch lg:gap-8">
         <div
-          class="w-full rounded-[28px] bg-[#80BA41] px-8 py-8  mb-10 text-center text-[#FBFBFB] shadow-[0_20px_45px_rgba(128,186,65,0.28)] sm:px-12 sm:py-10 lg:max-w-[28rem] lg:text-left"
+          class="w-full rounded-[28px] bg-[#80BA41] px-8 py-8 mb-10 text-center text-[#FBFBFB] shadow-[0_20px_45px_rgba(128,186,65,0.28)] sm:px-12 sm:py-10 lg:flex-1 lg:text-left"
         >
           <p class="text-sm font-semibold uppercase tracking-[0.28em] text-white/75">
             {{ statusLabel }}
@@ -44,7 +44,11 @@
 
           <div class="mt-8 rounded-2xl bg-white/12 px-5 py-4 text-left backdrop-blur-sm">
             <p class="text-sm font-medium text-white/95">
-              {{ isSignedIn ? 'You are signed in, so we can take you straight back to your chat space.' : 'You are not signed in right now, so the safest path is back to the welcome page.' }}
+              {{
+                isSignedIn
+                  ? 'You are signed in, so we can take you straight back to your chat space.'
+                  : 'You are not signed in right now, so the safest path is back to the welcome page.'
+              }}
             </p>
           </div>
 
@@ -73,10 +77,8 @@
 
 <script setup lang="ts">
 import { onAuthStateChanged, type Auth } from 'firebase/auth'
-import logo from './assets/svg/logo.svg'
 import bgImg from './assets/images/bgImage.png'
 import huggingIcon from './assets/svg/noto_people-hugging.svg'
-import topSVG from './assets/svg/green-blob.svg'
 
 const props = defineProps<{
   error: {
@@ -93,14 +95,16 @@ const message = computed(
     props.error?.message ||
     'Something went wrong while loading this page.'
 )
-const statusLabel = computed(() => (statusCode.value === 404 ? 'Page Not Found' : 'Something Went Wrong'))
+const statusLabel = computed(() =>
+  statusCode.value === 404 ? 'Page Not Found' : 'Something Went Wrong'
+)
 const headline = computed(() =>
   statusCode.value === 404 ? 'This page slipped out of reach.' : 'A small hiccup happened here.'
 )
 const supportiveMessage = computed(() =>
   statusCode.value === 404
     ? "The page you're looking for isn't available, but you're still in the right place."
-    : "Something interrupted this page, but we can guide you back to a safe place in the app."
+    : 'Something interrupted this page, but we can guide you back to a safe place in the app.'
 )
 
 const isSignedIn = ref(false)

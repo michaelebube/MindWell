@@ -32,8 +32,6 @@ export default defineNuxtPlugin(nuxtApp => {
     console.log('Connected to Firebase emulators')
   }
 
-  
-
   return {
     provide: {
       auth,

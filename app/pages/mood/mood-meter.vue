@@ -156,9 +156,7 @@ import backArrowIcon from '../../assets/svg/back-arrow.svg'
 import bottomBlueBlob from '../../assets/svg/bottomBlueSVG.svg'
 import rightSideBlue from '../../assets/svg/rightSideBlue.svg'
 
-definePageMeta({
-  layout: 'app',
-})
+
 
 const router = useRouter()
 const { getLatestMoodLog, getMoodLogsByDays } = useMoodLog()
