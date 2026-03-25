@@ -115,8 +115,6 @@ import bottomBlueBlob from '../../assets/svg/bottomBlueSVG.svg'
 import rightSideBlue from '../../assets/svg/rightSideBlue.svg'
 import sideBarBottomWave from '../../assets/svg/Sidebar-Blue-Wave.svg'
 
-
-
 const route = useRoute()
 const router = useRouter()
 const { $auth } = useNuxtApp()
