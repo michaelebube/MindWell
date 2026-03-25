@@ -1,7 +1,7 @@
 <template>
   <div class="flex w-full" :class="isUser ? 'justify-end' : 'justify-start'">
     <div class="max-w-[80%] xs:max-w-[70%] px-4 py-3 xs:text-sm text-xs" :class="bubbleClasses">
-      <p class="whitespace-pre-wrap break-words">{{ message }}</p>
+      <p class="whitespace-pre-wrap wrap-break-word">{{ message }}</p>
       <span
         class="text-[10px] xs:text-xs mt-1 block opacity-70"
         :class="isUser ? 'text-right' : 'text-left'"

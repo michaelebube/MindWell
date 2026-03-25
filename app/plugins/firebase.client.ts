@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
@@ -19,6 +20,14 @@ export default defineNuxtPlugin(nuxtApp => {
   }
 
   const app = initializeApp(firebaseConfig)
+
+  const appCheckSiteKey = config.public.firebaseAppCheckSiteKey as string | undefined
+  if (appCheckSiteKey) {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(appCheckSiteKey),
+      isTokenAutoRefreshEnabled: true,
+    })
+  }
 
   const auth = getAuth(app)
   const firestore = getFirestore(app)
