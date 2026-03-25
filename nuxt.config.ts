@@ -26,6 +26,7 @@ export default defineNuxtConfig({
       ],
     },
   },
+  modules: ['@vercel/speed-insights/nuxt'],
 
   vite: {
     plugins: [tailwindcss()],
