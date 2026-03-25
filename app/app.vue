@@ -5,6 +5,6 @@
   <SpeedInsights />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { SpeedInsights } from '@vercel/speed-insights/vue'
 </script>
