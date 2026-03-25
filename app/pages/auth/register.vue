@@ -212,7 +212,6 @@ const handleRegister = async () => {
         email: formData.value.email,
         createdAt: new Date().toISOString(),
       })
-     
     } catch (firestoreErr) {
       console.warn('Firestore save failed (non-critical):', firestoreErr)
     }
