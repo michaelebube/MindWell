@@ -99,8 +99,8 @@ const CRISIS_KEYWORDS = [
 const CRISIS_SAFE_RESPONSE = `I hear that you're going through something really difficult right now, and I'm concerned about you.
 
 Please reach out to someone who can help:
-📞 Nigeria Suicide Prevention: 0800-123-4567
-📞 SURPIN Helpline: +234 806 210 6493
+📞 Nigerian Suicide Prevention Initiative Counselling Centre: 08062106493
+📞 SURPIN Helpline: 08000787746
 
 You don't have to face this alone. Would you like to talk about connecting with professional support?`
 

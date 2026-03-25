@@ -38,3 +38,53 @@ body {
     margin-bottom: auto;
   }
 }
+
+/*
+  Tune homepage statement sizing per iPad family instead of using one generic
+  tablet rule. These viewport bands map closely to iPad Mini, Air, and Pro.
+*/
+@media (min-width: 744px) and (max-width: 768px) and (min-height: 1024px) {
+  .tablet-statement-stack > * + * {
+    margin-top: 2.9rem !important;
+  }
+
+  .tablet-statement {
+    width: min(82vw, 38rem);
+    max-width: none;
+    padding-inline: 1.9rem;
+    padding-block: 1rem;
+    font-size: 1.15rem;
+    line-height: 1.8rem;
+  }
+}
+
+@media (min-width: 820px) and (max-width: 834px) and (min-height: 1180px) {
+  .tablet-statement-stack > * + * {
+    margin-top: 3.3rem !important;
+  }
+
+  .tablet-statement {
+    width: min(84vw, 42rem);
+    max-width: none;
+    padding-inline: 2.15rem;
+    padding-block: 1.15rem;
+    font-size: 1.25rem;
+    line-height: 2.0rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1032px) and (min-height: 1366px),
+  (min-width: 1366px) and (max-width: 1370px) and (min-height: 1024px) {
+  .tablet-statement-stack > * + * {
+    margin-top: 3.7rem !important;
+  }
+
+  .tablet-statement {
+    width: min(86vw, 50rem);
+    max-width: none;
+    padding-inline: 2.5rem;
+    padding-block: 1.35rem;
+    font-size: 1.4rem;
+    line-height: 2.1rem;
+  }
+}

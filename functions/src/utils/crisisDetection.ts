@@ -15,13 +15,13 @@ export const CRISIS_KEYWORDS = {
     'hurt myself',
     'no reason to live',
     'better off dead',
-    'can\'t go on',
+    "can't go on",
     'ending it all',
     'take my life',
     'overdose',
     'cut myself',
   ],
-  
+
   // Nigerian Pidgin variants
   pidgin: [
     'i wan kpai',
@@ -50,7 +50,7 @@ export const CRISIS_KEYWORDS = {
     'make everything just end',
     'i wan check out',
   ],
-  
+
   // Hopelessness indicators (both languages)
   hopelessness: [
     'no hope',
@@ -71,55 +71,61 @@ export const CRISIS_KEYWORDS = {
     'person no dey for me',
     'i dey alone',
   ],
-};
+}
 
 // All keywords flattened for quick lookup
 const ALL_CRISIS_KEYWORDS = [
   ...CRISIS_KEYWORDS.english,
   ...CRISIS_KEYWORDS.pidgin,
   ...CRISIS_KEYWORDS.hopelessness,
-];
+]
 
 /**
  * Quick keyword-based crisis detection
  * First layer of hybrid approach - fast pattern matching
  */
 export function detectCrisisKeywords(message: string): {
-  isCrisis: boolean;
-  matchedKeywords: string[];
-  confidence: 'high' | 'medium' | 'low';
+  isCrisis: boolean
+  matchedKeywords: string[]
+  confidence: 'high' | 'medium' | 'low'
 } {
-  const normalizedMessage = message.toLowerCase().trim();
-  const matchedKeywords: string[] = [];
-  
+  const normalizedMessage = message.toLowerCase().trim()
+  const matchedKeywords: string[] = []
+
   for (const keyword of ALL_CRISIS_KEYWORDS) {
     if (normalizedMessage.includes(keyword.toLowerCase())) {
-      matchedKeywords.push(keyword);
+      matchedKeywords.push(keyword)
     }
   }
-  
+
   // Determine confidence based on matches
-  let confidence: 'high' | 'medium' | 'low' = 'low';
-  
+  let confidence: 'high' | 'medium' | 'low' = 'low'
+
   if (matchedKeywords.length >= 2) {
-    confidence = 'high';
+    confidence = 'high'
   } else if (matchedKeywords.length === 1) {
     // Check if it's a strong indicator
     const strongIndicators = [
-      'kill myself', 'suicide', 'i wan kpai', 'i wan die',
-      'end my life', 'i wan end am', 'hurt myself', 'harm myself',
-    ];
-    const hasStrongMatch = matchedKeywords.some(k => 
+      'kill myself',
+      'suicide',
+      'i wan kpai',
+      'i wan die',
+      'end my life',
+      'i wan end am',
+      'hurt myself',
+      'harm myself',
+    ]
+    const hasStrongMatch = matchedKeywords.some(k =>
       strongIndicators.some(s => k.toLowerCase().includes(s))
-    );
-    confidence = hasStrongMatch ? 'high' : 'medium';
+    )
+    confidence = hasStrongMatch ? 'high' : 'medium'
   }
-  
+
   return {
     isCrisis: matchedKeywords.length > 0,
     matchedKeywords,
     confidence,
-  };
+  }
 }
 
 /**
@@ -150,7 +156,7 @@ Respond with JSON only:
   "isCrisis": boolean,
   "confidence": number (0-1),
   "reason": "brief explanation"
-}`;
+}`
 }
 
 /**
@@ -160,29 +166,29 @@ export const CRISIS_RESPONSES = {
   immediate: `I'm really concerned about what you've shared. Your feelings are valid, and I want you to know that help is available right now.
 
 🆘 **Immediate Support:**
-- Nigeria Suicide Prevention: 0800-SUICIDE (0800-784-2433)
-- Mental Health Helpline: 09030000741
+- Nigerian Suicide Prevention Initiative Counselling Centre: 08062106493
+- Mental Health Helpline (SURPIN): 08000787746
 
 Would you like me to help you connect with someone who can provide immediate support?`,
-  
+
   pidgin: `I hear you, and wetin you dey feel matter well well. Abeg, make you no carry this load alone.
 
 🆘 **Help Dey Available:**
-- Nigeria Suicide Prevention: 0800-SUICIDE (0800-784-2433)
-- Mental Health Helpline: 09030000741
+- Nigerian Suicide Prevention Initiative Counselling Centre: 08062106493
+- Mental Health Helpline (SURPIN): 08000787746
 
 You fit talk to person wey go understand. You wan make I help you connect?`,
 
   followUp: `I'm here with you. Remember, reaching out for help is a sign of strength, not weakness. Would you like to talk more about what you're going through?`,
-};
+}
 
 /**
  * Get appropriate crisis response based on message language
  */
 export function getCrisisResponse(message: string): string {
-  const hasPidgin = CRISIS_KEYWORDS.pidgin.some(keyword => 
+  const hasPidgin = CRISIS_KEYWORDS.pidgin.some(keyword =>
     message.toLowerCase().includes(keyword.toLowerCase())
-  );
-  
-  return hasPidgin ? CRISIS_RESPONSES.pidgin : CRISIS_RESPONSES.immediate;
+  )
+
+  return hasPidgin ? CRISIS_RESPONSES.pidgin : CRISIS_RESPONSES.immediate
 }

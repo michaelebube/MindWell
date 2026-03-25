@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-    import bgImg from '../assets/images/bgImage.png'
+ 
 
 </script>
 

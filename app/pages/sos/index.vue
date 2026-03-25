@@ -5,7 +5,9 @@
       :style="{ backgroundImage: `url(${bgImg})` }"
     ></div>
     <!-- Header -->
-    <div class="flex items-center justify-between md:justify-normal xs:px-4 xl:px-8 px-3 pt-8 pb-2 z-10">
+    <div
+      class="flex items-center justify-between md:justify-normal xs:px-4 xl:px-8 px-3 pt-8 pb-2 z-10"
+    >
       <button aria-label="Go Back" @click="goBack">
         <div
           class="bg-[#1565C0] w-10 h-9 rounded-lg flex items-center justify-center cursor-pointer"
@@ -13,14 +15,17 @@
           <img :src="backArrowIcon" alt="Back Arrow" class="w-9 h-9 p-2" />
         </div>
       </button>
-      <img :src="logo" alt="MindWell Logo" class="-mr-2 w-20 h-20 md:w-28 md:h-28 xl:w-32 xl:h-32 md:absolute md:left-1/2 md:top-3 md:-translate-x-1/2" />
+      <img
+        :src="logo"
+        alt="MindWell Logo"
+        class="-mr-2 w-20 h-20 md:w-28 md:h-28 xl:w-32 xl:h-32 md:absolute md:left-1/2 md:top-3 md:-translate-x-1/2"
+      />
     </div>
 
-
-
     <!-- Content -->
-    <div class="flex-1 md:flex md:flex-col md:max-w-3/4 md:mx-auto overflow-y-auto px-3 xs:px-4 py-4 md:py-8 xl:py-12 space-y-3 xs:space-y-4 z-10">
-     
+    <div
+      class="flex-1 md:flex md:flex-col md:max-w-3/4 md:mx-auto overflow-y-auto px-3 xs:px-4 py-4 md:py-8 xl:py-12 space-y-3 xs:space-y-4 z-10"
+    >
       <!-- SOS Support Title -->
       <div class="flex items-center md:justify-center gap-3">
         <div
@@ -34,7 +39,9 @@
 
       <!-- You're Not Alone Section -->
       <div class="bg-[#80BA41] rounded-sm xs:rounded-md p-5 lg:p-8 text-white">
-        <h2 class="text-sm font-semibold text-center mb-5 lg:text-lg">You're Not Alone Right Now.</h2>
+        <h2 class="text-sm font-semibold text-center mb-5 lg:text-lg">
+          You're Not Alone Right Now.
+        </h2>
         <p class="text-[13px] text-center lg:text-[16px] leading-relaxed mb-4">
           It looks like you may be feeling overwhelmed or in danger of hurting yourself. I'm really
           glad you're here. Your life matters, and help is available right now.
@@ -50,12 +57,12 @@
         <h3 class="text-[13px] lg:text-[16px] text-center mb-3 tracking-wide leading-relaxed">
           If You Are in Immediate Danger
         </h3>
-        <p class="text-[13px] lg:text-[16px]  text-center mb-5 leading-relaxed tracking-wide">
+        <p class="text-[13px] lg:text-[16px] text-center mb-5 leading-relaxed tracking-wide">
           Please contact your local emergency number right now.
         </p>
         <div class="border-t border-white/30 pt-3">
           <p class="text-[13px] lg:text-[16px] text-center mb-1">Emergency Services:</p>
-          <p class="text-3xl font-bold lg:text-4xl text-center">911</p>
+          <p class="text-3xl font-bold lg:text-4xl text-center">112</p>
         </div>
       </div>
 
@@ -69,31 +76,37 @@
 
         <!-- Suicide & Crisis Helpline -->
         <div class="text-center pt-3 mb-4">
-          <p class="text-[13px] lg:text-[16px] text-[#80BA41] mb-1">Suicide & Crisis Helpline (24/7)</p>
+          <p class="text-[13px] lg:text-[16px] text-[#80BA41] mb-1">
+            Suicide & Crisis Helpline (24/7)
+          </p>
           <a
-            href="tel:080-01-2304-029"
+            href="tel:08000787746"
             class="text-xs lg:text-sm font-semibold flex items-center justify-center gap-2"
           >
-            080-01-2304-029
+            08000787746
             <img :src="callIcon" alt="call-icon" class="w-4 h-4 lg:w-6 lg:h-6" />
           </a>
         </div>
 
         <!-- Mental Health Support Line -->
         <div class="text-center">
-          <p class="text-[13px] lg:text-[16px] text-[#80BA41] mb-1">Mental Health Support Line</p>
+          <p class="text-[13px] lg:text-[16px] text-[#80BA41] mb-1">
+            Nigerian Suicide Prevention Initiative Counselling Centre
+          </p>
           <a
-            href="tel:080-01-2304-029"
+            href="tel:08062106493"
             class="text-xs lg:text-sm font-semibold flex items-center justify-center gap-2"
           >
-            080-01-2304-029
+            08062106493
             <img :src="callIcon" alt="call-icon" class="w-4 h-4 lg:w-6 lg:h-6" />
           </a>
         </div>
       </div>
 
       <!-- Bottom Message -->
-      <div class="bg-[#80BA41] rounded-sm xs:rounded-md p-5 lg:p-8 mb-4 md:mb-18 xl:mb-16 text-center shadow-sm">
+      <div
+        class="bg-[#80BA41] rounded-sm xs:rounded-md p-5 lg:p-8 mb-4 md:mb-18 xl:mb-16 text-center shadow-sm"
+      >
         <p class="text-sm text-[#FBFBFB] lg:text-lg font-medium leading-relaxed">
           You don't have to know what to say. Just letting someone know you're struggling is enough.
         </p>
@@ -126,7 +139,6 @@ import bottomBlueBlob from '../../assets/svg/bottomBlueSVG.svg'
 import rightSideBlue from '../../assets/svg/rightSideBlue.svg'
 
 definePageMeta({
-  layout: 'app',
   path: '/sos',
 })
 
