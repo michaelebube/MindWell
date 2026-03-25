@@ -108,9 +108,17 @@ const supportiveMessage = computed(() =>
 )
 
 const isSignedIn = ref(false)
+const route = useRoute()
 
 const primaryActionLabel = computed(() => (isSignedIn.value ? 'Go to Chat' : 'Go to Home'))
-const primaryActionPath = computed(() => (isSignedIn.value ? '/chat' : '/'))
+const primaryActionPath = computed(() => {
+  if (!isSignedIn.value) {
+    return '/'
+  }
+
+  const chatRouteMatch = route.path.match(/^\/chat\/[^/]+$/)
+  return chatRouteMatch ? route.path : '/chat'
+})
 
 onMounted(() => {
   const { $auth } = useNuxtApp()
