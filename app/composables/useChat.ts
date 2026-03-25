@@ -236,10 +236,16 @@ export const useChat = () => {
       const snapshot = await getDocs(q)
       if (snapshot.empty) return null
 
-      const doc = snapshot.docs[0]
+      const activeChatDoc = snapshot.docs.find(doc => {
+        const data = doc.data() as { deleted?: boolean }
+        return !data.deleted
+      })
+
+      if (!activeChatDoc) return null
+
       return {
-        id: doc?.id,
-        ...doc?.data(),
+        id: activeChatDoc.id,
+        ...activeChatDoc.data(),
       } as Chat
     } catch (error) {
       console.error('Error fetching today chat:', error)
