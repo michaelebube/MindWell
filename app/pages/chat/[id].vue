@@ -80,7 +80,7 @@
 
     <Transition name="wave-default">
       <img
-        v-if="!sidebarOpen"
+        v-if="!sidebarOpen && !shouldHideBottomWaves"
         class="absolute bottom-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
         :src="bottomBlueBlob"
         alt=""
@@ -89,7 +89,7 @@
 
     <Transition name="wave-default">
       <img
-        v-if="!sidebarOpen"
+        v-if="!sidebarOpen && !shouldHideBottomWaves"
         class="absolute bottom-0 right-0 hidden sm:block sm:w-56 sm:h-20 md:w-72 md:h-20 lg:w-86 lg:h-24 xl:w-130 xl:h-16 w-24 h-24"
         :src="rightSideBlue"
         alt=""
@@ -99,7 +99,7 @@
     <Transition name="slide-right">
       <img
         v-if="sidebarOpen"
-        class="absolute bottom-0 right-0 hidden sm:block sm:w-1/2 md:w-3/5 xl:w-2/3 sm:h-14 md:h-16 lg:h-20"
+        class="absolute bottom-0 right-0 hidden md:block sm:w-1/2 md:w-3/5 xl:w-2/3 sm:h-14 md:h-16 lg:h-20"
         :src="sideBarBottomWave"
       />
     </Transition>
@@ -140,6 +140,10 @@ const activeChatId = ref(route.params.id as string)
 const isLoading = ref(true)
 const isBotTyping = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
+const isTouchInputDevice = ref(false)
+const isTextFieldFocused = ref(false)
+
+const shouldHideBottomWaves = computed(() => isTouchInputDevice.value && isTextFieldFocused.value)
 
 // User info
 const userName = computed(() => $auth.currentUser?.displayName || 'User')
@@ -157,8 +161,53 @@ const scrollToBottom = () => {
   })
 }
 
+const isEditableTextTarget = (target: EventTarget | null): boolean => {
+  if (!(target instanceof HTMLElement)) return false
+
+  if (target instanceof HTMLTextAreaElement) return true
+
+  if (target instanceof HTMLInputElement) {
+    const nonTextInputTypes = new Set([
+      'button',
+      'checkbox',
+      'color',
+      'file',
+      'hidden',
+      'image',
+      'radio',
+      'range',
+      'reset',
+      'submit',
+    ])
+    return !nonTextInputTypes.has(target.type)
+  }
+
+  return target.isContentEditable
+}
+
+const updateFocusedTextFieldState = () => {
+  isTextFieldFocused.value = isEditableTextTarget(document.activeElement)
+}
+
+const handleFocusChange = () => {
+  if (!isTouchInputDevice.value) {
+    isTextFieldFocused.value = false
+    return
+  }
+
+  updateFocusedTextFieldState()
+}
+
 // Load chats and initialize from route param
 onMounted(async () => {
+  const supportsTouch = navigator.maxTouchPoints > 0
+  const coarsePointer = window.matchMedia('(any-pointer: coarse)').matches
+  const noHover = window.matchMedia('(hover: none)').matches
+  isTouchInputDevice.value = supportsTouch && (coarsePointer || noHover)
+
+  document.addEventListener('focusin', handleFocusChange)
+  document.addEventListener('focusout', handleFocusChange)
+
   try {
     // Load user's chat history
     chats.value = await getUserChats()
@@ -181,6 +230,9 @@ onMounted(async () => {
 
 // Cleanup on unmount
 onUnmounted(() => {
+  document.removeEventListener('focusin', handleFocusChange)
+  document.removeEventListener('focusout', handleFocusChange)
+
   if (unsubscribeMessages) {
     unsubscribeMessages()
   }
