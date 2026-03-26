@@ -99,7 +99,7 @@
     <Transition name="slide-right">
       <img
         v-if="sidebarOpen"
-        class="absolute bottom-0 right-0 hidden md:block sm:w-1/2 md:w-3/5 xl:w-2/3 sm:h-14 md:h-16 lg:h-20"
+        class="absolute bottom-0 right-0 hidden sm:block sm:w-1/2 md:w-3/5 xl:w-2/3 sm:h-14 md:h-16 lg:h-20"
         :src="sideBarBottomWave"
       />
     </Transition>
@@ -189,9 +189,17 @@ const updateFocusedTextFieldState = () => {
   isTextFieldFocused.value = isEditableTextTarget(document.activeElement)
 }
 
-const handleFocusChange = () => {
+const handleFocusChange = (e: FocusEvent) => {
   if (!isTouchInputDevice.value) {
     isTextFieldFocused.value = false
+    return
+  }
+
+  if (e.type === 'focusout') {
+    // Wait one frame so document.activeElement reflects the next focused element.
+    requestAnimationFrame(() => {
+      updateFocusedTextFieldState()
+    })
     return
   }
 
