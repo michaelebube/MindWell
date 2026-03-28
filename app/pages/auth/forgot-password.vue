@@ -31,7 +31,7 @@
 
       <!-- Form container -->
       <div
-        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 lg:max-w-lg xl:max-w-136 space-y-3 rounded-xl px-6 py-8 md:py-10 lg:py-12 mb-10 xs:mb-0 sm:mb-24 relative"
+        class="tablet-auth-form-gap flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 lg:max-w-lg xl:max-w-136 space-y-3 rounded-xl px-6 py-8 md:py-10 lg:py-12 mb-10 xs:mb-0 sm:mb-24 relative"
       >
         <!-- Success grey overlay -->
         <div

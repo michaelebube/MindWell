@@ -73,7 +73,8 @@
 
     <!-- Input -->
     <ChatInput
-      class="z-10 sm:mb-12 lg:mb-18 sm:px-8 lg:px-9.5"
+      class="z-10 sm:px-8 lg:px-9.5 transition-all duration-200"
+      :class="shouldHideBottomWaves ? 'sm:mb-4 lg:mb-5' : 'sm:mb-12 lg:mb-18'"
       :disabled="isBotTyping || isLoading"
       @send="handleSendMessage"
     />

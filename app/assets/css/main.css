@@ -37,6 +37,20 @@ body {
     margin-top: auto;
     margin-bottom: auto;
   }
+
+  /*
+    Lock sections to the visible viewport on tall tablets so decorative bottom
+    waves remain visible without page-level scrolling.
+  */
+  .tablet-lock-height {
+    min-height: 100dvh;
+    height: 100dvh;
+  }
+
+  /* Reduce large auth card bottom spacing that can push wave artwork below view. */
+  .tablet-auth-form-gap {
+    margin-bottom: 2.5rem !important;
+  }
 }
 
 /*
@@ -69,7 +83,7 @@ body {
     padding-inline: 2.15rem;
     padding-block: 1.15rem;
     font-size: 1.25rem;
-    line-height: 2.0rem;
+    line-height: 2rem;
   }
 }
 

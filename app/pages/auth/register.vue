@@ -43,7 +43,7 @@
 
       <!-- Form container -->
       <div
-        class="flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 lg:max-w-md xl:max-w-120 space-y-3 rounded-xl px-6 py-8 lg:py-12 xl:py-8 mb-10 xs:mb-0 sm:mb-36"
+        class="tablet-auth-form-gap flex flex-col gap-3 w-full bg-[#2558A6] xs:max-w-80 max-w-72 sm:max-w-96 md:max-w-104 lg:max-w-md xl:max-w-120 space-y-3 rounded-xl px-6 py-8 lg:py-12 xl:py-8 mb-10 xs:mb-0 sm:mb-36"
       >
         <!-- Success Message -->
         <div v-if="registrationState === 'success'" class="text-center text-white py-14 sm:py-10">
