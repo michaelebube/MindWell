@@ -1,5 +1,5 @@
 <template>
-  <div class="relative h-screen w-screen overflow-hidden">
+  <div class="relative min-h-screen tablet-lock-height w-screen overflow-hidden">
     <div class="absolute lg:hidden -top-4 -right-1 object-cover z-10">
       <img :src="topSVG" alt="" />
     </div>

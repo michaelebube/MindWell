@@ -1,5 +1,5 @@
 <template>
-  <div class="relative min-h-screen flex flex-col">
+  <div class="relative min-h-screen tablet-lock-height flex flex-col overflow-hidden">
     <div
       class="absolute z-0 inset-0 opacity-5 bg-cover bg-center bg-no-repeat"
       :style="{ backgroundImage: `url(${bgImg})` }"
@@ -17,7 +17,9 @@
       alt=""
     />
 
-    <div class="flex-1 relative z-10 flex flex-col overflow-y-auto *:flex-1 *:flex *:flex-col">
+    <div
+      class="flex-1 min-h-0 relative z-10 flex flex-col overflow-y-auto *:flex-1 *:flex *:flex-col"
+    >
       <slot />
     </div>
 

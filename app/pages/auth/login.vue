@@ -26,7 +26,7 @@
 
       <!-- Form container -->
       <div
-        class="flex flex-col gap-3 w-full xs:max-w-80 sm:max-w-96 md:max-w-104 xl:max-w-120 max-w-72 space-y-3 rounded-xl px-6 pt-4 pb-7 mb-10 xs:mb-0 sm:mb-24 relative overflow-hidden transition-all duration-300 bg-[#2558A6]"
+        class="tablet-auth-form-gap flex flex-col gap-3 w-full xs:max-w-80 sm:max-w-96 md:max-w-104 xl:max-w-120 max-w-72 space-y-3 rounded-xl px-6 pt-4 pb-7 mb-10 xs:mb-0 sm:mb-24 relative overflow-hidden transition-all duration-300 bg-[#2558A6]"
         :class="{ 'pt-12': loginState === 'success' || loginState === 'error' }"
       >
         <div
