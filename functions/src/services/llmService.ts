@@ -188,7 +188,7 @@ export async function generatePersonalizedResponse(
 
     // Create chat with system instruction in the first message
     const chat = genAI.chats.create({
-      model: 'gemini-3-flash',
+      model: 'gemini-3-flash-preview',
       config: {
         temperature: 0.7,
         topP: 0.9,
