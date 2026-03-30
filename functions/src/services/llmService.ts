@@ -77,6 +77,7 @@ const CRISIS_KEYWORDS = [
   'take my life',
   'wan kpai',
   'i wan kpai',
+  'i wan kpeme',
   'wan die',
   'i wan die',
   'i go kpai',
@@ -187,7 +188,7 @@ export async function generatePersonalizedResponse(
 
     // Create chat with system instruction in the first message
     const chat = genAI.chats.create({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash',
       config: {
         temperature: 0.7,
         topP: 0.9,
