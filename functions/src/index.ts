@@ -16,6 +16,7 @@ const db = getFirestore()
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000
 const RATE_LIMIT_MAX_REQUESTS = 20
+const RATE_LIMIT_TTL_MS = 60 * 24 * 60 * 60 * 1000
 
 // Response type for the chat function
 interface ChatResponse {
@@ -356,6 +357,8 @@ export const chatWithDialogflow = onCall<{
  */
 async function enforceUserRateLimit(userId: string): Promise<void> {
   const now = Date.now()
+  const nowDate = new Date(now)
+  const expiresAt = new Date(now + RATE_LIMIT_TTL_MS)
   const rateLimitRef = db.collection('rate_limits').doc(userId)
 
   await db.runTransaction(async tx => {
@@ -365,7 +368,8 @@ async function enforceUserRateLimit(userId: string): Promise<void> {
       tx.set(rateLimitRef, {
         count: 1,
         windowStartMs: now,
-        updatedAt: new Date(),
+        updatedAt: nowDate,
+        expiresAt,
       })
       return
     }
@@ -381,7 +385,8 @@ async function enforceUserRateLimit(userId: string): Promise<void> {
         {
           count: 1,
           windowStartMs: now,
-          updatedAt: new Date(),
+          updatedAt: nowDate,
+          expiresAt,
         },
         { merge: true }
       )
@@ -399,7 +404,8 @@ async function enforceUserRateLimit(userId: string): Promise<void> {
       rateLimitRef,
       {
         count: count + 1,
-        updatedAt: new Date(),
+        updatedAt: nowDate,
+        expiresAt,
       },
       { merge: true }
     )
