@@ -14,6 +14,10 @@ import { detectCrisisKeywords, getCrisisResponse } from './utils/crisisDetection
 initializeApp()
 const db = getFirestore()
 
+const RATE_LIMIT_WINDOW_MS = 60 * 1000
+const RATE_LIMIT_MAX_REQUESTS = 20
+const RATE_LIMIT_TTL_MS = 60 * 24 * 60 * 60 * 1000
+
 // Response type for the chat function
 interface ChatResponse {
   message: string
@@ -56,6 +60,26 @@ export const chatWithDialogflow = onCall<{
       throw new HttpsError('invalid-argument', 'Chat ID is required')
     }
 
+    await enforceUserRateLimit(userId)
+
+    // ── Performance tracking ─────────────────────────────────
+    const startTime = Date.now()
+
+    const logPerformance = (intent: string, isCrisis: boolean, error = false) => {
+      void db.collection('performance_logs').add({
+        userId,
+        chatId,
+        responseTimeMs: Date.now() - startTime,
+        intent,
+        isCrisis,
+        error,
+        timestamp: new Date(),
+      }).catch((logError) => {
+        console.error('Performance logging failed:', logError)
+      })
+    }
+    // ─────────────────────────────────────────────────────────
+
     // Log user message to Firestore
     try {
       //      console.log('=== CHAT FUNCTION CALLED ===');
@@ -94,6 +118,8 @@ export const chatWithDialogflow = onCall<{
 
         // Log crisis event for monitoring
         await logCrisisEvent(userId, chatId, message, keywordResult.matchedKeywords)
+
+        await logPerformance('crisis_detected', true)
 
         return {
           message: getCrisisResponse(message),
@@ -134,6 +160,9 @@ export const chatWithDialogflow = onCall<{
           })
 
           await logCrisisEvent(userId, chatId, message, keywordResult.matchedKeywords)
+
+          await logPerformance('crisis_fallback', true)
+
           return {
             message: getCrisisResponse(message),
             isCrisis: true,
@@ -161,6 +190,8 @@ export const chatWithDialogflow = onCall<{
           timestamp: new Date(),
           isCrisis: false,
         })
+
+        await logPerformance('dialogflow_fallback_llm', false)
 
         return {
           message: llmResponse,
@@ -190,6 +221,9 @@ export const chatWithDialogflow = onCall<{
           })
 
         await logCrisisEvent(userId, chatId, message, ['dialogflow_crisis_intent'])
+
+        await logPerformance(dialogflowResponse.intent, true)
+
         return {
           message: dialogflowResponse.responseText || getCrisisResponse(message),
           isCrisis: true,
@@ -223,6 +257,9 @@ export const chatWithDialogflow = onCall<{
           })
 
         await logCrisisEvent(userId, chatId, message, keywordResult.matchedKeywords)
+
+        await logPerformance('crisis_fallback_keywords', true)
+
         return {
           message: response,
           isCrisis: true,
@@ -235,13 +272,16 @@ export const chatWithDialogflow = onCall<{
 
       // Step 5: For non-crisis intents, generate personalized LLM response
       if (shouldUseLLM(dialogflowResponse.intent)) {
+        const effectiveIntent = dialogflowResponse.isFallback
+          ? 'default'
+          : dialogflowResponse.intent
         // Get user's mood context for personalization
         const moodContext = await getMoodContext(userId)
 
         // Generate LLM response with intent-specific guidance
         const personalizedMessage = await generatePersonalizedResponse(
           message,
-          dialogflowResponse.intent,
+          effectiveIntent,
           dialogflowResponse.parameters,
           chatId,
           moodContext,
@@ -259,15 +299,17 @@ export const chatWithDialogflow = onCall<{
           role: 'assistant',
           timestamp: new Date(),
           isCrisis: false,
-          intent: dialogflowResponse.intent,
+          intent: effectiveIntent,
           sentimentScore: dialogflowResponse.sentimentScore,
           sentimentMagnitude: dialogflowResponse.sentimentMagnitude,
         })
 
+        await logPerformance(effectiveIntent, false)
+
         return {
           message: personalizedMessage,
           isCrisis: false,
-          intent: dialogflowResponse.intent,
+          intent: effectiveIntent,
           confidence: dialogflowResponse.confidence,
           sentimentScore: dialogflowResponse.sentimentScore,
           sentimentMagnitude: dialogflowResponse.sentimentMagnitude,
@@ -290,6 +332,8 @@ export const chatWithDialogflow = onCall<{
           sentimentMagnitude: dialogflowResponse.sentimentMagnitude ?? null,
         })
 
+      await logPerformance(dialogflowResponse.intent, false)
+
       return {
         message: dialogflowResponse.responseText,
         isCrisis: false,
@@ -300,10 +344,71 @@ export const chatWithDialogflow = onCall<{
       }
     } catch (error) {
       console.error('Chat function error:', error)
+      await logPerformance('error', false, true)
       throw new HttpsError('internal', 'Failed to process message')
     }
   }
 )
+
+/**
+ * Basic per-user rate limiting using a Firestore document per user.
+ */
+async function enforceUserRateLimit(userId: string): Promise<void> {
+  const now = Date.now()
+  const nowDate = new Date(now)
+  const expiresAt = new Date(now + RATE_LIMIT_TTL_MS)
+  const rateLimitRef = db.collection('rate_limits').doc(userId)
+
+  await db.runTransaction(async tx => {
+    const snapshot = await tx.get(rateLimitRef)
+
+    if (!snapshot.exists) {
+      tx.set(rateLimitRef, {
+        count: 1,
+        windowStartMs: now,
+        updatedAt: nowDate,
+        expiresAt,
+      })
+      return
+    }
+
+    const data = snapshot.data() as { count?: number; windowStartMs?: number }
+    const count = typeof data.count === 'number' ? data.count : 0
+    const windowStartMs = typeof data.windowStartMs === 'number' ? data.windowStartMs : now
+    const isWindowExpired = now - windowStartMs >= RATE_LIMIT_WINDOW_MS
+
+    if (isWindowExpired) {
+      tx.set(
+        rateLimitRef,
+        {
+          count: 1,
+          windowStartMs: now,
+          updatedAt: nowDate,
+          expiresAt,
+        },
+        { merge: true }
+      )
+      return
+    }
+
+    if (count >= RATE_LIMIT_MAX_REQUESTS) {
+      throw new HttpsError(
+        'resource-exhausted',
+        'Too many requests. Please wait a minute and try again.'
+      )
+    }
+
+    tx.set(
+      rateLimitRef,
+      {
+        count: count + 1,
+        updatedAt: nowDate,
+        expiresAt,
+      },
+      { merge: true }
+    )
+  })
+}
 
 /**
  * Log crisis events for monitoring and safety

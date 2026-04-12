@@ -71,8 +71,6 @@ export async function detectIntent(
   }
 
   try {
-    // Send request to Dialogflow CX
-    console.log('Dialogflow detectIntent request:', JSON.stringify(request))
     const [response] = await client.detectIntent(request)
 
     console.log('Dialogflow raw response received')
@@ -128,7 +126,7 @@ export async function detectIntent(
     }
 
     return {
-      responseText: responseText || "I'm here to listen. Could you tell me more?",
+      responseText: responseText,
       intent: queryResult.intent?.displayName || 'unknown',
       confidence,
       isFallback,
