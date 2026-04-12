@@ -65,20 +65,18 @@ export const chatWithDialogflow = onCall<{
     // ── Performance tracking ─────────────────────────────────
     const startTime = Date.now()
 
-    const logPerformance = async (intent: string, isCrisis: boolean, error = false) => {
-      try {
-        await db.collection('performance_logs').add({
-          userId,
-          chatId,
-          responseTimeMs: Date.now() - startTime,
-          intent,
-          isCrisis,
-          error,
-          timestamp: new Date(),
-        })
-      } catch (logError) {
+    const logPerformance = (intent: string, isCrisis: boolean, error = false) => {
+      void db.collection('performance_logs').add({
+        userId,
+        chatId,
+        responseTimeMs: Date.now() - startTime,
+        intent,
+        isCrisis,
+        error,
+        timestamp: new Date(),
+      }).catch((logError) => {
         console.error('Performance logging failed:', logError)
-      }
+      })
     }
     // ─────────────────────────────────────────────────────────
 
