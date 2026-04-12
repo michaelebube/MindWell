@@ -7,6 +7,8 @@
 export const CRISIS_KEYWORDS = {
   // Self-harm / Suicidal ideation - English
   english: [
+    'I feel like killing myself',
+    'I want to kill myself',
     'kill myself',
     'end my life',
     'want to die',
@@ -37,6 +39,9 @@ export const CRISIS_KEYWORDS = {
     'nobody go miss me',
     'i don tire for this life',
     'wetin be the point',
+    'i no wan live',
+    'i no wan wake up again',
+    'i wan kpeme',
     'i wan comot for this world',
     'make i just end am',
     'i no fit continue again',
@@ -106,6 +111,8 @@ export function detectCrisisKeywords(message: string): {
   } else if (matchedKeywords.length === 1) {
     // Check if it's a strong indicator
     const strongIndicators = [
+      'killing myself',
+      'want to kill myself',
       'kill myself',
       'suicide',
       'i wan kpai',

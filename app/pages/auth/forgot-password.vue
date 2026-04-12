@@ -126,7 +126,6 @@ const handlePasswordReset = async () => {
     resetState.value = 'idle'
     errorMessage.value = ''
 
-    // Get the current origin (works in dev and production)
     const continueUrl = window.location.origin + '/login'
 
     // Send password reset email with continue URL

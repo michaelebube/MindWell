@@ -123,7 +123,6 @@ const {
   createChat,
   getUserChats,
   sendMessage,
-  saveBotMessage,
   getChatMessages,
   subscribeToMessages,
   getTodayChat,
