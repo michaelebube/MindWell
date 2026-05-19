@@ -117,6 +117,26 @@ function buildHistory(recentMessages: Array<{ role: 'user' | 'model'; text: stri
   }))
 }
 
+function normalizeMessageText(text: string): string {
+  return text.trim().replace(/\s+/g, ' ').toLowerCase()
+}
+
+function removeCurrentUserMessageFromHistory(
+  recentMessages: Array<{ role: 'user' | 'model'; text: string }>,
+  userMessage: string
+) {
+  const lastMessage = recentMessages[recentMessages.length - 1]
+
+  if (
+    lastMessage?.role === 'user' &&
+    normalizeMessageText(lastMessage.text) === normalizeMessageText(userMessage)
+  ) {
+    return recentMessages.slice(0, -1)
+  }
+
+  return recentMessages
+}
+
 // Retry wrapper for Gemini calls with exponential backoff + jitter
 async function callGeminiWithRetries(chat: any, userMessage: string, maxRetries = 3): Promise<any> {
   let attempt = 0
@@ -169,7 +189,10 @@ export async function generatePersonalizedResponse(
       ? `Dialogflow sentiment analysis of this message: score=${sentiment.score.toFixed(2)} (range -1 negative to +1 positive), magnitude=${sentiment.magnitude?.toFixed(2) ?? 'N/A'} (emotional intensity)`
       : 'No sentiment data available'
 
-  const recentMessages = await getRecentMessagesForLLM(chatId || '')
+  const recentMessages = removeCurrentUserMessageFromHistory(
+    await getRecentMessagesForLLM(chatId || ''),
+    userMessage
+  )
 
   // Build the system prompt
   const base = (await getSystemPrompt())
@@ -178,7 +201,9 @@ export async function generatePersonalizedResponse(
     .replace('{moodContext}', moodString)
     .replace('{sentimentContext}', sentimentString)
 
-  const systemPrompt = base
+  const systemPrompt = `${base}
+
+Conversation rule: the history contains earlier turns only. Respond to the user's latest message, use any new details they added, and do not repeat a previous assistant reply unless the user explicitly asks you to repeat it.`
 
   try {
     // Initialize Gemini

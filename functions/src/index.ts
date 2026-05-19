@@ -37,14 +37,12 @@ export const chatWithDialogflow = onCall<{
   chatId: string
 }>(
   {
-    // Optional: Add rate limiting and other options
     enforceAppCheck: false, // Set to true in production with App Check
     cors: true,
     // Grant access to secret values declared via defineSecret('SYSTEM_PROMPT')
     secrets: ['SYSTEM_PROMPT'],
   },
   async (request): Promise<ChatResponse> => {
-    // Verify authentication
     if (!request.auth) {
       throw new HttpsError('unauthenticated', 'User must be authenticated')
     }
@@ -134,15 +132,6 @@ export const chatWithDialogflow = onCall<{
 
       try {
         dialogflowResponse = await detectIntent(message, chatId, chatId)
-        console.log('Dialogflow result:', {
-          intent: dialogflowResponse.intent,
-          confidence: dialogflowResponse.confidence,
-          isFallback: dialogflowResponse.isFallback,
-          isCrisis: dialogflowResponse.isCrisis,
-          sentimentScore: dialogflowResponse.sentimentScore,
-          sentimentMagnitude: dialogflowResponse.sentimentMagnitude,
-          responseTextPreview: dialogflowResponse.responseText?.slice?.(0, 200),
-        })
       } catch (dialogflowError) {
         console.error('Dialogflow error, using fallback with LLM:', dialogflowError)
 
