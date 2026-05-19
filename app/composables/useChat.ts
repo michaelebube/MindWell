@@ -113,7 +113,7 @@ export const useChat = () => {
         chatId,
         content,
         role: 'user' as const,
-        timestamp: Timestamp.now(),
+        timestamp: serverTimestamp(),
         isCrisis: false,
       }
 
@@ -141,7 +141,11 @@ export const useChat = () => {
         // timestamp: Timestamp.now(),
         // isCrisis: false,
         id: userMsgRef.id,
-        ...userMessageData,
+        chatId,
+        content,
+        role: 'user' as const,
+        timestamp: Timestamp.now(),
+        isCrisis: false,
       }
     } catch (error) {
       console.error('Error sending message:', error)
@@ -161,7 +165,7 @@ export const useChat = () => {
         chatId,
         content,
         role: 'assistant' as const,
-        timestamp: Timestamp.now(),
+        timestamp: serverTimestamp(),
         isCrisis,
       }
 
@@ -169,7 +173,11 @@ export const useChat = () => {
 
       return {
         id: botMsgRef.id,
-        ...botMessageData,
+        chatId,
+        content,
+        role: 'assistant' as const,
+        timestamp: Timestamp.now(),
+        isCrisis,
       }
     } catch (error) {
       console.error('Error saving bot message:', error)
