@@ -1,5 +1,5 @@
 <template>
-  <header class="py-3 xs:py-4 flex items-center justify-between">
+  <header class="py-3 xs:py-4 sm:py-0 flex items-center justify-between shadow-md ">
     <!-- Hamburger Menu -->
     <button
       class="flex items-center justify-center rounded-lg hover:bg-gray-10 cursor-pointer transition-colors"
