@@ -5,7 +5,6 @@
         <textarea
           ref="textareaRef"
           v-model="message"
-          :disabled="disabled"
           placeholder="What's bothering you?"
           rows="1"
           class="w-full px-4 py-2.5 xs:py-3 bg-[#80BA41] rounded-lg resize-none xs:text-sm text-xs focus:outline-none focus:ring-2 focus:ring-[#80BA41] disabled:opacity-50 disabled:cursor-not-allowed max-h-32 placeholder:text-[#FBFBFB]/60 text-[#FBFBFB] overflow-y-auto"

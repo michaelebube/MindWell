@@ -1,6 +1,6 @@
 import { onAuthStateChanged, type User } from 'firebase/auth'
 
-const publicRoutes = new Set(['/', '/login', '/register', '/forgot-password'])
+const publicRoutes = new Set(['/', '/login', '/register', '/forgot-password', '/sos'])
 const authRoutes = new Set(['/login', '/register', '/forgot-password', '/auth/forgot-password'])
 
 const waitForAuthUser = async (): Promise<User | null> => {
