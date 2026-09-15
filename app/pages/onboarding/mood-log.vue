@@ -12,10 +12,19 @@
           v-for="mood in moods"
           :key="mood.value"
           :disabled="loading"
+          :aria-busy="loading && selectedMood === mood.value"
           class="rounded-lg xs:text-base text-[#80BA41] text-sm font-medium transition-all duration-200 flex flex-col items-center gap-1 disabled:cursor-not-allowed relative"
           :class="{ 'opacity-50': loading && selectedMood !== mood.value }"
           @click="handleMoodSelect(mood.value)"
         >
+          <span
+            v-if="loading && selectedMood === mood.value && !showSuccess"
+            class="absolute inset-0 z-10 flex items-center justify-center"
+            role="status"
+            aria-label="Saving mood"
+          >
+            <span class="mood-loader" aria-hidden="true"></span>
+          </span>
           <!-- Checkmark overlay on selected mood -->
           <div
             v-if="showSuccess && selectedMood === mood.value"
@@ -42,6 +51,9 @@
           <span class="font-normal text-xs xs:text-lg">{{ mood.label }}</span>
         </button>
       </div>
+      <p class="sr-only" aria-live="polite">
+        {{ loading ? 'Saving your mood.' : showSuccess ? 'Mood captured.' : '' }}
+      </p>
     </div>
   </div>
 </template>
@@ -129,5 +141,20 @@ const handleMoodSelect = async (mood: string) => {
   stroke-dasharray: 24;
   stroke-dashoffset: 24;
   animation: check-draw 0.3s ease-out 0.2s forwards;
+}
+
+.mood-loader {
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2px solid rgba(128, 186, 65, 0.25);
+  border-top-color: #80ba41;
+  border-radius: 9999px;
+  animation: mood-spin 0.7s linear infinite;
+}
+
+@keyframes mood-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
