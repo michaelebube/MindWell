@@ -28,9 +28,8 @@
               <img
                 :src="logo"
                 alt=""
-                class="h-6 w-6 object-contain sm:h-[48px] sm:w-[48px] xl:h-[60px] xl:w-[60px]"
+                class="h-6 w-6 object-contain sm:h-20 sm:w-20 md:h-24 md:w-24 xl:h-30 xl:w-30"
               />
-              <span>MindWell</span>
             </NuxtLink>
             <nav
               class="absolute left-1/2 hidden -translate-x-1/2 gap-7 sm:flex sm:gap-[38px] xl:gap-12"
