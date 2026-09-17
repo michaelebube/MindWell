@@ -22,7 +22,7 @@
           >
             <NuxtLink
               to="/"
-              class="flex items-center gap-2 text-[13px] font-bold text-[#003f36] no-underline sm:gap-1 sm:text-base xl:gap-1 xl:text-lg"
+              class="flex items-center gap-2 text-[13px] font-bold text-[#18332d] no-underline sm:gap-1 sm:text-base xl:gap-1 xl:text-lg"
               aria-label="MindWell home"
             >
               <img
@@ -54,7 +54,7 @@
               >
               <NuxtLink
                 to="/register"
-                class="rounded-full bg-[#003f36] px-3 py-2 text-[10px] font-semibold text-white no-underline sm:px-5 sm:py-3 sm:text-xs xl:px-6 xl:py-3.5 xl:text-[13px]"
+                class="rounded-full bg-[#80ba41] px-3 py-2 text-[10px] font-semibold text-white no-underline sm:px-5 sm:py-3 sm:text-xs xl:px-6 xl:py-3.5 xl:text-[13px]"
                 >Get Started</NuxtLink
               >
             </div>
@@ -71,7 +71,7 @@
                 Your campus wellness companion
               </p>
               <h1
-                class="mx-auto max-w-[330px] font-display text-[27px] font-bold leading-[1.1] tracking-[-.02em] text-[#003f36] sm:max-w-[790px] sm:text-[clamp(40px,4.2vw,64px)] md:max-w-[850px] xl:max-w-[1050px] xl:text-[clamp(54px,4.5vw,78px)]"
+                class="mx-auto max-w-[330px] font-display text-[27px] font-bold leading-[1.1] tracking-[-0.015em] text-[#3f6b4d] sm:max-w-[790px] sm:text-[clamp(40px,4.2vw,64px)] md:max-w-[850px] xl:max-w-[1050px] xl:text-[clamp(54px,4.5vw,78px)]"
               >
                 A safe space for your mind on campus.
               </h1>
@@ -84,22 +84,22 @@
               <div class="flex items-center justify-center gap-3 sm:gap-4 xl:gap-5">
                 <NuxtLink
                   to="/register"
-                  class="rounded-full bg-[#003f36] px-4 py-2 text-[10px] font-semibold text-white no-underline sm:px-[22px] sm:py-3 sm:text-[13px] xl:px-[26px] xl:py-3.5 xl:text-sm"
+                  class="rounded-full bg-[#80ba41] px-4 py-2 text-[10px] font-semibold text-white no-underline sm:px-[22px] sm:py-3 sm:text-[13px] xl:px-[26px] xl:py-3.5 xl:text-sm"
                   >Get Started</NuxtLink
                 >
                 <NuxtLink
                   to="/login"
-                  class="rounded-full border border-[#a5b7ae] px-4 py-2 text-[10px] font-semibold text-[#003f36] no-underline sm:px-[22px] sm:py-3 sm:text-[13px] xl:px-[26px] xl:py-3.5 xl:text-sm"
+                  class="rounded-full border border-[#a5b7ae] px-4 py-2 text-[10px] font-semibold text-[#18332d] no-underline sm:px-[22px] sm:py-3 sm:text-[13px] xl:px-[26px] xl:py-3.5 xl:text-sm"
                   >Sign in</NuxtLink
                 >
               </div>
 
               <div
-                class="mx-auto mt-6 max-w-[640px] rounded-[10px] border border-[#ebefea] bg-white p-[11px] text-left shadow-[0_12px_28px_rgba(0,63,54,.07)] sm:mt-7 sm:max-w-[800px] sm:rounded-[13px] sm:p-[15px] xl:mt-12 xl:max-w-[1040px] xl:rounded-[15px] xl:p-[20px]"
+                class="mx-auto mt-6 max-w-[640px] rounded-[10px] border border-[#ebefea] bg-white p-[11px] text-left shadow-[0_12px_28px_rgba(24,51,45,.07)] sm:mt-7 sm:max-w-[800px] sm:rounded-[13px] sm:p-[15px] xl:mt-12 xl:max-w-[1040px] xl:rounded-[15px] xl:p-[20px]"
                 aria-label="MindWell chat preview"
               >
                 <div
-                  class="flex items-center gap-2 px-[3px] pb-2.5 text-[#003f36] sm:gap-[11px] sm:px-[5px] sm:pb-[13px] xl:gap-[13px] xl:px-[7px] xl:pb-4"
+                  class="flex items-center gap-2 px-[3px] pb-2.5 text-[#18332d] sm:gap-[11px] sm:px-[5px] sm:pb-[13px] xl:gap-[13px] xl:px-[7px] xl:pb-4"
                 >
                   <span
                     class="grid h-[22px] w-[22px] place-items-center rounded-full bg-[#edf6e6] text-[10px] text-[#80ba41] sm:h-[30px] sm:w-[30px] sm:text-[13px] xl:h-9 xl:w-9 xl:text-[15px]"
@@ -130,7 +130,7 @@
                     Hi there, I'm listening.
                   </p>
                   <p
-                    class="mt-2 w-fit max-w-[72%] rounded-[7px] bg-[#003f36] px-2 py-1.5 text-[8px] leading-[1.45] text-white sm:mt-[11px] sm:rounded-[9px] sm:px-[11px] sm:py-2 sm:text-[10px] xl:mt-[13px] xl:rounded-[10px] xl:px-[13px] xl:py-2.5 xl:text-xs"
+                    class="mt-2 w-fit max-w-[72%] rounded-[7px] bg-[#80ba41] px-2 py-1.5 text-[8px] leading-[1.45] text-white sm:mt-[11px] sm:rounded-[9px] sm:px-[11px] sm:py-2 sm:text-[10px] xl:mt-[13px] xl:rounded-[10px] xl:px-[13px] xl:py-2.5 xl:text-xs"
                   >
                     {{
                       activePrompt ? activePrompt : 'I’m here if you need to talk through anything.'
@@ -169,14 +169,14 @@
               id="features"
             >
               <article
-                class="min-h-[142px] rounded-[9px] border border-[#eef0ec] bg-white p-3 shadow-[0_7px_17px_rgba(0,63,54,.04)] sm:min-h-[178px] sm:rounded-[11px] sm:p-[22px_18px] xl:min-h-[215px] xl:rounded-[13px] xl:p-7"
+                class="min-h-[142px] rounded-[9px] border border-[#eef0ec] bg-white p-3 shadow-[0_7px_17px_rgba(24,51,45,.04)] sm:min-h-[178px] sm:rounded-[11px] sm:p-[22px_18px] xl:min-h-[215px] xl:rounded-[13px] xl:p-7"
               >
                 <span
                   class="mb-2 grid h-6 w-6 place-items-center rounded-md bg-[#edf6e6] text-[11px] text-[#80ba41] sm:mb-[15px] sm:h-[30px] sm:w-[30px] sm:text-sm xl:mb-[19px] xl:h-9 xl:w-9 xl:text-base"
                   >▣</span
                 >
                 <h2
-                  class="mb-1 text-[9px] text-[#003f36] sm:mb-2 sm:text-sm xl:mb-2.5 xl:text-[17px]"
+                  class="mb-1 text-[9px] text-[#18332d] sm:mb-2 sm:text-sm xl:mb-2.5 xl:text-[17px]"
                 >
                   Secure &amp; Private
                 </h2>
@@ -187,14 +187,14 @@
                 </p>
               </article>
               <article
-                class="min-h-[142px] rounded-[9px] border border-[#eef0ec] bg-white p-3 shadow-[0_7px_17px_rgba(0,63,54,.04)] sm:min-h-[178px] sm:rounded-[11px] sm:p-[22px_18px] xl:min-h-[215px] xl:rounded-[13px] xl:p-7"
+                class="min-h-[142px] rounded-[9px] border border-[#eef0ec] bg-white p-3 shadow-[0_7px_17px_rgba(24,51,45,.04)] sm:min-h-[178px] sm:rounded-[11px] sm:p-[22px_18px] xl:min-h-[215px] xl:rounded-[13px] xl:p-7"
               >
                 <span
                   class="mb-2 grid h-6 w-6 place-items-center rounded-md bg-[#edf6e6] text-[11px] text-[#80ba41] sm:mb-[15px] sm:h-[30px] sm:w-[30px] sm:text-sm xl:mb-[19px] xl:h-9 xl:w-9 xl:text-base"
                   >✣</span
                 >
                 <h2
-                  class="mb-1 text-[9px] text-[#003f36] sm:mb-2 sm:text-sm xl:mb-2.5 xl:text-[17px]"
+                  class="mb-1 text-[9px] text-[#18332d] sm:mb-2 sm:text-sm xl:mb-2.5 xl:text-[17px]"
                 >
                   Culturally Aware AI
                 </h2>
@@ -206,14 +206,14 @@
                 </p>
               </article>
               <article
-                class="min-h-[142px] rounded-[9px] border border-[#eef0ec] bg-white p-3 shadow-[0_7px_17px_rgba(0,63,54,.04)] sm:min-h-[178px] sm:rounded-[11px] sm:p-[22px_18px] xl:min-h-[215px] xl:rounded-[13px] xl:p-7"
+                class="min-h-[142px] rounded-[9px] border border-[#eef0ec] bg-white p-3 shadow-[0_7px_17px_rgba(24,51,45,.04)] sm:min-h-[178px] sm:rounded-[11px] sm:p-[22px_18px] xl:min-h-[215px] xl:rounded-[13px] xl:p-7"
               >
                 <span
                   class="mb-2 grid h-6 w-6 place-items-center rounded-md bg-[#edf6e6] text-[11px] text-[#80ba41] sm:mb-[15px] sm:h-[30px] sm:w-[30px] sm:text-sm xl:mb-[19px] xl:h-9 xl:w-9 xl:text-base"
                   >♡</span
                 >
                 <h2
-                  class="mb-1 text-[9px] text-[#003f36] sm:mb-2 sm:text-sm xl:mb-2.5 xl:text-[17px]"
+                  class="mb-1 text-[9px] text-[#18332d] sm:mb-2 sm:text-sm xl:mb-2.5 xl:text-[17px]"
                 >
                   24/7 Support
                 </h2>
@@ -249,7 +249,7 @@
                         class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#d1fae5] text-xs font-semibold text-[#064e3b]"
                         >{{ step.number }}</span
                       >
-                      <h3 class="font-display text-sm font-semibold text-[#003f36] sm:text-base">
+                      <h3 class="font-display text-sm font-semibold text-[#18332d] sm:text-base">
                         {{ step.title }}
                       </h3>
                     </div>
@@ -267,17 +267,17 @@
             >
               <h2
                 id="faq-title"
-                class="mb-4 font-display text-xl font-bold text-[#003f36] sm:text-3xl"
+                class="mb-4 font-display text-xl font-bold text-[#18332d] sm:text-3xl"
               >
                 Frequently Asked Questions
               </h2>
               <div
-                class="divide-y divide-[#eef0ec] rounded-[10px] border border-[#eef0ec] bg-white px-4 shadow-[0_7px_17px_rgba(0,63,54,.04)] sm:px-6"
+                class="divide-y divide-[#eef0ec] rounded-[10px] border border-[#eef0ec] bg-white px-4 shadow-[0_7px_17px_rgba(24,51,45,.04)] sm:px-6"
               >
                 <article v-for="(item, index) in faqs" :key="item.question">
                   <button
                     type="button"
-                    class="flex w-full items-center justify-between gap-4 py-4 text-left text-xs font-semibold text-[#003f36] sm:text-sm"
+                    class="flex w-full items-center justify-between gap-4 py-4 text-left text-xs font-semibold text-[#18332d] sm:text-sm"
                     :aria-expanded="openFaq === index"
                     @click="openFaq = openFaq === index ? -1 : index"
                   >
@@ -297,7 +297,7 @@
             </section>
 
             <section
-              class="mx-auto mb-5 max-w-[1120px] rounded-lg bg-[#003f36] px-[18px] py-8 text-center text-white sm:mb-[42px] sm:max-w-[1240px] sm:rounded-xl sm:px-[30px] sm:py-12 md:max-w-[1320px] xl:mb-[52px] xl:max-w-[1440px] xl:rounded-[14px] xl:px-9 xl:py-[60px]"
+              class="mx-auto mb-5 max-w-[1120px] rounded-lg bg-[#315b45] px-[18px] py-8 text-center text-white sm:mb-[42px] sm:max-w-[1240px] sm:rounded-xl sm:px-[30px] sm:py-12 md:max-w-[1320px] xl:mb-[52px] xl:max-w-[1440px] xl:rounded-[14px] xl:px-9 xl:py-[60px]"
             >
               <h2
                 class="mx-auto mb-3.5 max-w-[310px] text-[17px] leading-[1.3] sm:mb-5 sm:max-w-[440px] sm:text-[27px] xl:mb-6 xl:max-w-[540px] xl:text-[33px]"
@@ -306,7 +306,7 @@
               </h2>
               <NuxtLink
                 to="/register"
-                class="inline-block rounded-full bg-white px-[17px] py-2 text-[9px] font-semibold text-[#003f36] no-underline sm:px-[23px] sm:py-[11px] sm:text-xs xl:px-7 xl:py-[13px] xl:text-sm"
+                class="inline-block rounded-full bg-white px-[17px] py-2 text-[9px] font-semibold text-[#315b45] no-underline sm:px-[23px] sm:py-[11px] sm:text-xs xl:px-7 xl:py-[13px] xl:text-sm"
                 >Connect with MindWell</NuxtLink
               >
             </section>
@@ -319,7 +319,7 @@
               class="grid w-full grid-cols-1 gap-5 sm:grid-cols-[minmax(0,1.5fr)_auto_auto] sm:gap-12 xl:gap-24"
             >
               <div class="flex flex-col gap-1">
-                <strong class="text-xs text-[#003f36] sm:text-[15px] xl:text-[17px]"
+                <strong class="text-xs text-[#18332d] sm:text-[15px] xl:text-[17px]"
                   >MindWell</strong
                 ><span>Your campus wellness companion.</span>
                 <p
