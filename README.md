@@ -35,37 +35,10 @@ Screenshots can be added here as the interface is finalised.
 - npm
 - Access to a Firebase project configured for the application
 
-### Install
 
-Install the web application dependencies from the repository root:
-
-```bash
-npm install
 ```
 
-The conversational backend has its own dependencies:
 
-```bash
-cd functions
-npm install
-cd ..
-```
-
-### Configure the application
-
-Create a `.env` file in the repository root using the Firebase web configuration for your development project:
-
-```dotenv
-NUXT_PUBLIC_FIREBASE_API_KEY=...
-NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
-NUXT_PUBLIC_FIREBASE_PROJECT_ID=...
-NUXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
-NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
-NUXT_PUBLIC_FIREBASE_APP_ID=...
-NUXT_PUBLIC_FIREBASE_APPCHECK_SITE_KEY=...
-```
-
-Do not commit `.env` files, API keys, service-account files, tokens, or other credentials. Use separate Firebase projects and credentials for development and production.
 
 ### Run the web app
 
