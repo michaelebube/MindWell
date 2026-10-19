@@ -6,7 +6,7 @@ MindWell is designed for everyday emotional support. It is not a diagnostic tool
 
 ## Features
 
-- **Conversational support** for working through stress, worries, and difficult experiences
+- **Conversational support** for working through stress, worries, and difficult experiences.
 - **Mood check-ins** that help users record how they are feeling
 - **Mood history and visualisation** to help users notice patterns over time
 - **Account-based access** so each user has their own conversations and mood records
